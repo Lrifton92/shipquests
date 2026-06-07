@@ -61,8 +61,11 @@ export function computeOwedMicro(earnedMicro: number, paidMicro: number, pct: nu
 let cached: VercelKV | null | undefined;
 function kv(): VercelKV | null {
   if (cached !== undefined) return cached;
-  const url = process.env.KV_REST_API_URL;
-  const token = process.env.KV_REST_API_TOKEN;
+  // Accept both env-var conventions: the legacy Vercel KV names (KV_REST_API_*)
+  // and the Upstash-for-Redis marketplace integration names (UPSTASH_REDIS_REST_*).
+  // Whichever the store injects, the client builds — no silent no-op on a name mismatch.
+  const url = process.env.KV_REST_API_URL ?? process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.KV_REST_API_TOKEN ?? process.env.UPSTASH_REDIS_REST_TOKEN;
   cached = url && token ? createClient({ url, token }) : null;
   return cached;
 }
