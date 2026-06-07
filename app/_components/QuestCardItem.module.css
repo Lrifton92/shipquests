@@ -1,0 +1,119 @@
+.card {
+  position: relative;
+  display: block;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  padding: var(--s-4);
+  box-shadow: var(--shadow);
+  transition: transform 0.18s var(--ease), border-color 0.18s var(--ease), box-shadow 0.18s var(--ease);
+  /* Left accent rail — gold for daily, subtle for one-shot. */
+  overflow: hidden;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--border-strong);
+  transition: background 0.18s var(--ease);
+}
+
+.card[data-kind="DAILY"]::before {
+  background: linear-gradient(180deg, var(--gold) 0%, var(--gold-deep) 100%);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card:hover {
+    transform: translateY(-2px);
+    border-color: var(--gold-line);
+    box-shadow: var(--shadow-lift);
+  }
+}
+
+.card:active {
+  transform: translateY(0);
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--s-3);
+}
+
+.badge {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  padding: 4px 8px;
+  border-radius: var(--r-sm);
+  text-transform: uppercase;
+}
+
+.daily {
+  color: var(--bg);
+  background: var(--gold);
+}
+
+.oneshot {
+  color: var(--text-2);
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+}
+
+.days {
+  font-size: 11px;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.title {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.action {
+  margin-top: var(--s-1);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-2);
+}
+
+.foot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-top: var(--s-4);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--border);
+}
+
+.reward {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.amount {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--gold);
+}
+
+.unit {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-3);
+}
+
+.left {
+  font-size: 12px;
+  color: var(--text-3);
+}
