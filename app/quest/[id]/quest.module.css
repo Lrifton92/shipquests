@@ -186,7 +186,9 @@
 }
 
 .needsLink {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
   margin-top: var(--s-3);
   font-size: 13px;
   font-weight: 700;
@@ -260,6 +262,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: var(--s-2);
   height: 50px;
   border-radius: var(--r-md);
   border: 1px solid var(--gold-line);
@@ -500,6 +503,9 @@
 }
 
 .backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
   margin-top: var(--s-3);
   color: var(--gold);
   font-weight: 700;

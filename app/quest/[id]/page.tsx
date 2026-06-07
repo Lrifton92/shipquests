@@ -6,6 +6,7 @@ import { createPublicClient, http, formatUnits } from "viem";
 import styles from "./quest.module.css";
 import { useMiniPay } from "../../_components/useMiniPay";
 import { WalletChip } from "../../_components/WalletChip";
+import { Arrow } from "../../_components/Arrow";
 import { CountUp } from "../../_components/CountUp";
 import { useT } from "../../_components/i18n";
 import type { Dict } from "@/lib/i18n/en";
@@ -160,6 +161,7 @@ export default function QuestDetail({ params }: { params: Promise<{ id: string }
           </div>
           <div className={styles.nfTitle}>{t("quest.notFound.title")}</div>
           <Link href="/" className={styles.backLink}>
+            <Arrow variant="left" size={15} />
             {t("quest.notFound.back")}
           </Link>
         </div>
@@ -242,6 +244,7 @@ export default function QuestDetail({ params }: { params: Promise<{ id: string }
                 rel="noopener noreferrer"
               >
                 {t("quest.step.doAction")}
+                <Arrow variant="diag" size={16} />
               </a>
             ) : (
               <div className={styles.walletHint}>
@@ -268,6 +271,7 @@ export default function QuestDetail({ params }: { params: Promise<{ id: string }
                   rel="noopener noreferrer"
                 >
                   {t("quest.needs.link")}
+                  <Arrow variant="diag" size={15} />
                 </a>
               </div>
             ) : (

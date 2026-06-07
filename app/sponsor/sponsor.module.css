@@ -285,6 +285,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: var(--s-2);
   height: 50px;
   padding: 0 var(--s-6);
   border-radius: var(--r-pill);

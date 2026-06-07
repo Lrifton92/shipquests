@@ -17,6 +17,7 @@ import {
 import styles from "./sponsor.module.css";
 import { useMiniPay } from "../_components/useMiniPay";
 import { WalletChip } from "../_components/WalletChip";
+import { Arrow } from "../_components/Arrow";
 import { useT } from "../_components/i18n";
 import type { Dict } from "@/lib/i18n/en";
 import { QUEST_ESCROW_ABI, QUEST_ESCROW_ADDRESS } from "@/lib/quest-abi";
@@ -256,6 +257,7 @@ export default function Sponsor() {
           {createdId !== null && (
             <Link href={`/quest/${createdId}`} className={styles.successCta}>
               {t("sponsor.success.view", { id: createdId })}
+              <Arrow variant="right" size={16} />
             </Link>
           )}
           <Link href="/sponsor" className={styles.successGhost} onClick={() => location.reload()}>

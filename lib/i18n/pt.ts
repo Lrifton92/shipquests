@@ -55,7 +55,7 @@ const pt: Dict = {
 
   // Detalhe da missão ----------------------------------------------------
   "quest.notFound.title": "Missão não encontrada",
-  "quest.notFound.back": "← Voltar às missões",
+  "quest.notFound.back": "Voltar às missões",
   "quest.badge.daily": "CAIXA DIÁRIA",
   "quest.badge.oneshot": "ÚNICA",
   "quest.reward.mystery": "Recompensa misteriosa",
@@ -66,13 +66,13 @@ const pt: Dict = {
   // Fluxo guiado em 2 passos
   "quest.step1.label": "Passo 1 · Faça a ação",
   "quest.step2.label": "Passo 2 · Resgate sua recompensa",
-  "quest.step.doAction": "Fazer a ação ↗",
+  "quest.step.doAction": "Fazer a ação",
   "quest.step.fromWallet": "Faça pela sua carteira",
   "quest.step2.hint": "Já fez a ação? Toque abaixo — verificamos onchain e enviamos sua recompensa.",
   "quest.preview": "Missão de prévia — resgatar exige o contrato ao vivo.",
   "quest.needs.title": "Primeiro complete a ação",
   "quest.needs.sub": "Ainda não encontramos sua ação onchain. Faça-a e verifique novamente.",
-  "quest.needs.link": "Abrir o app alvo ↗",
+  "quest.needs.link": "Abrir o app alvo",
   "quest.cta.verifying": "Verificando onchain…",
   "quest.cta.claiming": "Resgatando recompensa…",
   "quest.cta.checkAgain": "Feito — verificar de novo",
@@ -116,7 +116,7 @@ const pt: Dict = {
   "sponsor.cta.connect": "Conectar wallet para criar",
   "sponsor.success.title": "A missão está no ar",
   "sponsor.success.sub": "Suas recompensas estão bloqueadas em escrow na Celo. Os jogadores já podem completá-la.",
-  "sponsor.success.view": "Ver missão #{id} →",
+  "sponsor.success.view": "Ver missão #{id}",
   "sponsor.success.another": "Criar outra",
   "sponsor.val.target": "Insira um endereço de alvo válido.",
   "sponsor.val.token": "Insira um endereço de token válido.",

@@ -54,7 +54,7 @@ const fr: Dict = {
 
   // Détail de quête ------------------------------------------------------
   "quest.notFound.title": "Quête introuvable",
-  "quest.notFound.back": "← Retour aux quêtes",
+  "quest.notFound.back": "Retour aux quêtes",
   "quest.badge.daily": "BOÎTE QUOTIDIENNE",
   "quest.badge.oneshot": "UNIQUE",
   "quest.reward.mystery": "Récompense mystère",
@@ -65,13 +65,13 @@ const fr: Dict = {
   // Parcours guidé en 2 étapes
   "quest.step1.label": "Étape 1 · Fais l’action",
   "quest.step2.label": "Étape 2 · Réclame ta récompense",
-  "quest.step.doAction": "Faire l’action ↗",
+  "quest.step.doAction": "Faire l’action",
   "quest.step.fromWallet": "Fais-la depuis ton wallet",
   "quest.step2.hint": "Action faite ? Touche ci-dessous — on la vérifie onchain, puis on t’envoie ta récompense.",
   "quest.preview": "Quête en aperçu — réclamer nécessite le contrat live.",
   "quest.needs.title": "Fais d’abord l’action",
   "quest.needs.sub": "On n’a pas encore trouvé ton action onchain. Fais-la, puis vérifie à nouveau.",
-  "quest.needs.link": "Ouvrir l’app cible ↗",
+  "quest.needs.link": "Ouvrir l’app cible",
   "quest.cta.verifying": "Vérification onchain…",
   "quest.cta.claiming": "Récompense en cours…",
   "quest.cta.checkAgain": "C’est fait — revérifier",
@@ -115,7 +115,7 @@ const fr: Dict = {
   "sponsor.cta.connect": "Connecter le wallet pour créer",
   "sponsor.success.title": "La quête est en ligne",
   "sponsor.success.sub": "Tes récompenses sont bloquées en escrow sur Celo. Les joueurs peuvent la faire maintenant.",
-  "sponsor.success.view": "Voir la quête #{id} →",
+  "sponsor.success.view": "Voir la quête #{id}",
   "sponsor.success.another": "En créer une autre",
   "sponsor.val.target": "Saisis une adresse de cible valide.",
   "sponsor.val.token": "Saisis une adresse de token valide.",

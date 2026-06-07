@@ -5,6 +5,7 @@
 import Link from "next/link";
 import { rewardLabel, type QuestCard } from "@/lib/quest-list";
 import { useTilt } from "./useTilt";
+import { Arrow } from "./Arrow";
 import { useT } from "./i18n";
 import styles from "./QuestCardItem.module.css";
 
@@ -36,7 +37,9 @@ export function QuestCardItem({ quest }: { quest: QuestCard }) {
         </span>
         <span className={styles.topRight}>
           {quest.actionUrl && (
-            <span className={styles.extLink} aria-hidden>↗</span>
+            <span className={styles.extLink} aria-hidden>
+              <Arrow variant="diag" size={13} />
+            </span>
           )}
           <span className={styles.days}>{t("card.daysLeft", { n: days })}</span>
         </span>

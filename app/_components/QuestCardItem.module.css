@@ -90,9 +90,8 @@
 
 /* Hint that completing this quest opens an external dapp. */
 .extLink {
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1;
+  display: inline-flex;
+  align-items: center;
   color: var(--gold);
   opacity: 0.8;
 }

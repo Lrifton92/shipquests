@@ -55,7 +55,7 @@ const en = {
 
   // Quest detail ---------------------------------------------------------
   "quest.notFound.title": "Quest not found",
-  "quest.notFound.back": "← Back to quests",
+  "quest.notFound.back": "Back to quests",
   "quest.badge.daily": "DAILY BOX",
   "quest.badge.oneshot": "ONE-SHOT",
   "quest.reward.mystery": "Mystery reward",
@@ -66,13 +66,13 @@ const en = {
   // Two-step guided flow
   "quest.step1.label": "Step 1 · Do the action",
   "quest.step2.label": "Step 2 · Claim your reward",
-  "quest.step.doAction": "Do the action ↗",
+  "quest.step.doAction": "Do the action",
   "quest.step.fromWallet": "Do it from your wallet",
   "quest.step2.hint": "Done the action? Tap below — we verify it onchain, then send your reward.",
   "quest.preview": "Preview quest — claiming needs the live contract.",
   "quest.needs.title": "Complete the action first",
   "quest.needs.sub": "We couldn’t find your onchain action yet. Do it, then verify again.",
-  "quest.needs.link": "Open the target app ↗",
+  "quest.needs.link": "Open the target app",
   "quest.cta.verifying": "Verifying onchain…",
   "quest.cta.claiming": "Claiming reward…",
   "quest.cta.checkAgain": "I did it — check again",
@@ -117,7 +117,7 @@ const en = {
   "sponsor.cta.connect": "Connect wallet to create",
   "sponsor.success.title": "Quest is live",
   "sponsor.success.sub": "Your rewards are locked in escrow on Celo. Players can complete it now.",
-  "sponsor.success.view": "View quest #{id} →",
+  "sponsor.success.view": "View quest #{id}",
   "sponsor.success.another": "Create another",
   // Validation
   "sponsor.val.target": "Enter a valid action target address.",
