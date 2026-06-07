@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ShipQuests
 
-## Getting Started
+**Quest-to-earn on Celo / MiniPay. Do a real onchain action, get verified onchain, claim cUSD.**
 
-First, run the development server:
+Sponsors fund a quest ("do X on my app → earn cUSD"). Users complete the action, the backend **verifies it onchain** and signs an EIP-712 attestation, and users claim their reward from an onchain escrow — fixed (one-shot) or a variable **daily box**. No forms, no fees, no jargon.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Built for [Celo Proof of Ship](https://celoplatform.notion.site/Proof-of-Ship-17cd5cb803de8060ba10d22a72b549f8).
+
+## Live
+
+- **Contract (Celo mainnet):** [`0x2f575fb83A3c71f7E5C482b19a3C33F8146b491f`](https://celoscan.io/address/0x2f575fb83A3c71f7E5C482b19a3C33F8146b491f)
+- Reward token: cUSD (`0x765DE816845861e75A25fCA122bb6898B8B1282a`)
+
+## How it works
+
+1. **Sponsor** creates a quest and escrows the reward pot onchain (`createQuest`).
+2. **User** performs the required action on the sponsor's contract.
+3. **Backend** reads Celo onchain to confirm the action, then signs an **EIP-712 attestation** (`Claim(questId, wallet, amount, deadline)`) with a trusted signer — no onchain randomness, the reward amount is bounded onchain.
+4. **User** claims; the escrow verifies the signature and pays out cUSD. One-shot = once per wallet; daily = a 24h-cooldown mystery box (variable amount within the sponsor's range).
+
+## Stack
+
+Next.js (App Router) · viem · Solidity 0.8.24 · Celo mainnet · MiniPay (`window.ethereum`) · EIP-712 trusted-signer escrow.
+
+## Structure
+
+```
+contracts/src/QuestEscrow.sol   # escrow + EIP-712 claim (6 forge-std tests)
+lib/celo-read.ts                # keyless onchain completion check
+lib/attest.ts                   # EIP-712 attestation signer (server-only)
+app/                            # MiniApp: quests, claim, sponsor, history, settings
+app/api/attest/[questId]        # verify onchain + sign attestation
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Develop
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm install
+npm run dev            # http://localhost:3000
+cd contracts && npx hardhat test   # contract tests
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Env (`.env.local`): `SIGNER_PRIVATE_KEY` (server), `NEXT_PUBLIC_QUEST_ESCROW_ADDRESS`, `NEXT_PUBLIC_CELO_RPC_URL`.
 
-## Learn More
+## License
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT
