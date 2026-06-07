@@ -1,0 +1,222 @@
+.shell {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: var(--s-6) var(--s-4);
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  margin-bottom: var(--s-1);
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.sub {
+  font-size: 14px;
+  color: var(--text-2);
+}
+
+.card {
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  padding: var(--s-4);
+  box-shadow: var(--shadow);
+}
+
+.cardLabel {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--text-3);
+  margin-bottom: var(--s-3);
+}
+
+.note {
+  margin-top: var(--s-3);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+
+/* Connect prompt -------------------------------------------------------- */
+.connectBtn {
+  margin-top: var(--s-3);
+  height: 46px;
+  width: 100%;
+  border-radius: var(--r-md);
+  border: 1px solid var(--gold-line);
+  background: linear-gradient(180deg, var(--gold) 0%, var(--gold-deep) 100%);
+  color: #1a1700;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: var(--glow-gold);
+  transition: transform 0.14s var(--ease), filter 0.14s var(--ease), opacity 0.14s var(--ease);
+}
+.connectBtn:active:not(:disabled) {
+  transform: translateY(1px) scale(0.995);
+}
+.connectBtn:disabled {
+  opacity: 0.55;
+  cursor: default;
+  box-shadow: none;
+  filter: grayscale(0.3);
+}
+
+/* Share link ------------------------------------------------------------ */
+.linkBox {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-3);
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+.linkUrl {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12.5px;
+  color: var(--text-2);
+}
+
+.btnRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-2);
+  margin-top: var(--s-3);
+}
+
+.actionBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  height: 44px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.16s var(--ease), background 0.16s var(--ease), transform 0.12s var(--ease);
+}
+.actionBtn:active {
+  transform: scale(0.98);
+}
+@media (hover: hover) and (pointer: fine) {
+  .actionBtn:hover {
+    border-color: var(--gold-line);
+    background: var(--surface-hover);
+  }
+}
+
+.copied {
+  border-color: var(--gold-line);
+  background: var(--gold-soft);
+  color: var(--gold);
+}
+
+/* Stats ----------------------------------------------------------------- */
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-3);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--s-3);
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+.statValue {
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--text);
+}
+.statValue.eligible {
+  color: var(--gold);
+}
+
+.statLabel {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-3);
+}
+
+/* Claim CTA ------------------------------------------------------------- */
+.claimLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  margin-top: var(--s-3);
+  height: 46px;
+  width: 100%;
+  border-radius: var(--r-md);
+  border: 1px solid var(--gold-line);
+  background: linear-gradient(180deg, var(--gold) 0%, var(--gold-deep) 100%);
+  color: #1a1700;
+  font-size: 15px;
+  font-weight: 800;
+  box-shadow: var(--glow-gold);
+  transition: transform 0.14s var(--ease);
+}
+.claimLink:active {
+  transform: translateY(1px) scale(0.995);
+}
+
+/* How it works ---------------------------------------------------------- */
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  list-style: none;
+}
+.stepItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-2);
+}
+.stepNum {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--gold-line);
+  background: var(--gold-soft);
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 800;
+}

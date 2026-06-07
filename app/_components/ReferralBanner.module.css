@@ -1,0 +1,61 @@
+.banner {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 10px var(--s-3);
+  border-bottom: 1px solid var(--gold-line);
+  background:
+    linear-gradient(180deg, var(--gold-soft) 0%, transparent 100%),
+    var(--bg-2);
+  animation: bannerIn 0.4s var(--ease) both;
+}
+
+@keyframes bannerIn {
+  from { opacity: 0; transform: translate3d(0, -8px, 0); }
+  to { opacity: 1; transform: none; }
+}
+
+.dot {
+  flex: 0 0 auto;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 8px var(--gold-glow);
+  animation: pulseGold 2.4s var(--ease) infinite;
+}
+
+.text {
+  flex: 1;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--text-2);
+}
+
+.close {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: none;
+  color: var(--text-3);
+  cursor: pointer;
+  border-radius: var(--r-sm);
+  transition: color 0.16s var(--ease);
+}
+.close:active {
+  color: var(--text);
+}
+@media (hover: hover) and (pointer: fine) {
+  .close:hover {
+    color: var(--text);
+  }
+}

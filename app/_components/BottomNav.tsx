@@ -53,6 +53,23 @@ const TABS: Tab[] = [
     ),
   },
   {
+    href: "/invite",
+    labelKey: "nav.invite",
+    match: (p) => p.startsWith("/invite"),
+    icon: (a) => (
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden>
+        <circle cx="9" cy="8" r="3.4" stroke="currentColor" strokeWidth="1.7" fill={a ? "currentColor" : "none"} />
+        <path
+          d="M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5"
+          stroke="currentColor"
+          strokeWidth="1.7"
+          strokeLinecap="round"
+        />
+        <path d="M18.5 8.5v5M16 11h5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+      </svg>
+    ),
+  },
+  {
     href: "/sponsor",
     labelKey: "nav.create",
     match: (p) => p.startsWith("/sponsor"),
