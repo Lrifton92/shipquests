@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type CSSProperties } from "react";
 import styles from "./page.module.css";
 import { useMiniPay } from "./_components/useMiniPay";
 import { WalletChip } from "./_components/WalletChip";
@@ -102,8 +102,10 @@ export default function Home() {
 
       {state === "ready" && quests.length > 0 && (
         <div className={styles.list}>
-          {quests.map((q) => (
-            <QuestCardItem key={q.id} quest={q} />
+          {quests.map((q, i) => (
+            <div key={q.id} className="reveal" style={{ "--i": i } as CSSProperties}>
+              <QuestCardItem quest={q} />
+            </div>
           ))}
         </div>
       )}

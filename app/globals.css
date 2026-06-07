@@ -3,12 +3,12 @@
  * Depth = flat fills + thin borders + light shadows + static gradients.
  * Motion = transform/opacity only, short, GPU-friendly, reduced-motion aware. */
 :root {
-  /* Base — deep warm black, not pure #000 (less harsh on cheap OLED). */
-  --bg: #08080a;
-  --bg-2: #0c0c0e;
-  --surface: #121211;
-  --surface-2: #17170f;
-  --surface-hover: #1c1c14;
+  /* Base — deep near-black (Soufian: "plus de noir"). */
+  --bg: #030304;
+  --bg-2: #060607;
+  --surface: #0b0b09;
+  --surface-2: #0e0e0a;
+  --surface-hover: #16160e;
 
   /* Celo gold accent — warm, controlled, never fluo. */
   --gold: #fcff52;
@@ -67,15 +67,62 @@ html {
 }
 
 body {
+  position: relative;
   min-height: 100%;
   color: var(--text);
-  background:
-    radial-gradient(120% 80% at 50% -10%, rgba(252, 255, 82, 0.06) 0%, transparent 55%),
-    var(--bg);
+  background: var(--bg);
   font-family: var(--font-sans, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-tap-highlight-color: transparent;
+}
+
+/* Living gold halos on deep black — radial gradients only (no blur), GPU-animated. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -20% -10% auto -10%;
+  height: 70vh;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(46% 60% at 22% 8%, rgba(252, 255, 82, 0.10) 0%, transparent 60%),
+    radial-gradient(50% 55% at 85% 0%, rgba(251, 204, 92, 0.08) 0%, transparent 62%);
+  animation: haloBreathe 7s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+body::after {
+  content: "";
+  position: fixed;
+  inset: auto -20% -25% -20%;
+  height: 50vh;
+  pointer-events: none;
+  z-index: -1;
+  background: radial-gradient(50% 60% at 50% 100%, rgba(252, 255, 82, 0.06) 0%, transparent 65%);
+  animation: haloBreathe 9s ease-in-out infinite reverse;
+  will-change: transform, opacity;
+}
+
+@keyframes haloBreathe {
+  0%, 100% { opacity: 0.55; transform: translate3d(0, 0, 0) scale(1); }
+  50% { opacity: 1; transform: translate3d(0, -2%, 0) scale(1.08); }
+}
+
+/* Entry cascade — set --i on each item for stagger. */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translate3d(0, 14px, 0); }
+  to { opacity: 1; transform: none; }
+}
+.reveal {
+  opacity: 0;
+  animation: fadeUp 0.5s var(--ease) forwards;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+
+/* Soft pulsing dot / live accents. */
+@keyframes pulseGold {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--gold-glow); }
+  50% { opacity: 0.65; box-shadow: 0 0 0 6px transparent; }
 }
 
 a {
