@@ -42,6 +42,18 @@ contract QuestEscrow {
     bytes32 private constant CLAIM_TYPEHASH =
         keccak256("Claim(uint256 questId,address wallet,uint256 amount,uint256 deadline)");
 
+    /// @notice questId => sponsor has reclaimed the unclaimed remainder.
+    mapping(uint256 => bool) public withdrawn;
+
+    uint256 private _lock = 1;
+
+    modifier nonReentrant() {
+        require(_lock == 1, "reentrant");
+        _lock = 2;
+        _;
+        _lock = 1;
+    }
+
     constructor(address _signer) {
         require(_signer != address(0), "zero signer");
         signer = _signer;
@@ -77,7 +89,7 @@ contract QuestEscrow {
     /// @notice Claim a reward against a trusted-signer EIP-712 attestation.
     ///         `wallet` in the signed payload is bound to msg.sender (anti-replay
     ///         cross-wallet). Amount is bounded onchain to [minReward, maxReward].
-    function claim(uint256 questId, uint256 amount, uint256 deadline, bytes calldata sig) external {
+    function claim(uint256 questId, uint256 amount, uint256 deadline, bytes calldata sig) external nonReentrant {
         Quest storage q = quests[questId];
         require(q.left > 0, "exhausted");
         require(block.timestamp <= deadline, "expired");
@@ -96,6 +108,19 @@ contract QuestEscrow {
         lastClaim[questId][msg.sender] = block.timestamp;
         q.left -= 1;
         require(IERC20(q.token).transfer(msg.sender, amount), "pay fail");
+    }
+
+    /// @notice After a quest's deadline, the sponsor reclaims the escrowed
+    ///         remainder for completions that were never claimed. Callable once.
+    function withdrawUnclaimed(uint256 questId) external nonReentrant {
+        Quest storage q = quests[questId];
+        require(msg.sender == q.sponsor, "not sponsor");
+        require(block.timestamp > q.deadline, "not over");
+        require(!withdrawn[questId], "done");
+        withdrawn[questId] = true;
+        uint256 remainder = q.maxReward * q.left;
+        q.left = 0;
+        require(IERC20(q.token).transfer(q.sponsor, remainder), "wd fail");
     }
 
     /// @dev Recover the signer from a packed 65-byte (r,s,v) signature.

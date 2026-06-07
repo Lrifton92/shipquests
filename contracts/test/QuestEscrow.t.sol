@@ -137,4 +137,21 @@ contract QuestEscrowTest is Test {
         vm.expectRevert(bytes("bad sig"));
         esc.claim(id, 2e18, dl, abi.encodePacked(r, s, v));
     }
+
+    // --- Task 5: withdrawUnclaimed + reentrancy -----------------------------
+
+    function test_withdrawUnclaimed_afterDeadlineOnly() public {
+        vm.prank(sponsor);
+        uint256 id = esc.createQuest(
+            target, address(cusd), 2e18, 2e18, 5, QuestEscrow.Kind.OneShot, uint64(block.timestamp + 1 days)
+        );
+        vm.prank(sponsor);
+        vm.expectRevert(bytes("not over"));
+        esc.withdrawUnclaimed(id);
+        vm.warp(block.timestamp + 2 days);
+        uint256 balBefore = cusd.balanceOf(sponsor);
+        vm.prank(sponsor);
+        esc.withdrawUnclaimed(id);
+        assertEq(cusd.balanceOf(sponsor), balBefore + 10e18); // 2e18 * 5, nothing claimed
+    }
 }
