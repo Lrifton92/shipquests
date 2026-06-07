@@ -728,6 +728,15 @@ Run: `npx tsc --noEmit` → 0 errors
 git add app && git commit -m "feat(miniapp): self-serve sponsor create-quest form"
 ```
 
+### Task 14b: Referral viral (FAST-FOLLOW, post-déploiement, anti-sybil)
+
+**Files:** `app/api/attest/[questId]/route.ts` (modify), `lib/referral.ts` (create), `app/page.tsx` (referral link UI)
+
+- [ ] **Step 1:** Référral OFF-CHAIN — ne PAS modifier `QuestEscrow` (figé/testé). Lien de parrainage `?ref=<wallet>`. Stocker l'attribution filleul→parrain (KV/store léger) à la première visite.
+- [ ] **Step 2:** Anti-sybil — le parrain n'est crédité QUE quand le filleul **complète une vraie quête vérifiée onchain** (réutilise `hasCompletedQuest`). Jamais au signup.
+- [ ] **Step 3:** Bonus parrain via une quête "referral" dédiée seedée (montant fixe), réclamée par le parrain avec attestation backend après confirmation de la 1ère quête du filleul.
+- [ ] **Step 4:** UI : bouton "Inviter" (copie le lien `?ref=`), compteur de filleuls actifs.
+
 ### Task 15: Ship hygiene + submission
 
 - [ ] **Step 1:** README (what/why/how, Celo mainnet address, open source) + LICENSE (MIT) + GitHub topics (celo, minipay, web3, quest-to-earn).

@@ -81,6 +81,14 @@ Mécanique de rétention quotidienne, **sans gambling** (récompense méritée p
 - **Cooldown 24h** par (quête, wallet).
 - Effet : 1 tx/user/jour (densité + rétention), le frisson du hasard **sur un gain mérité** — la frontière qui passe l'anti-farming (cf. §7).
 
+## 6ter. Referral viral (fast-follow, post-déploiement)
+
+Acquisition virale = le vrai levier du scoring impact-driven. Ajouté **après** que le core tourne (ne pas re-toucher le contrat figé).
+- **Lien/code de parrainage** par user.
+- **Anti-sybil obligatoire** : le parrain est récompensé UNIQUEMENT quand le filleul **complète une vraie quête vérifiée onchain** (jamais à l'inscription — sinon aimant à faux comptes, pénalisé par Talent/Celo).
+- **Off-chain d'abord** : l'attribution parrain↔filleul + le bonus sont gérés au moment où le backend signe l'attestation du filleul (champ `referrer`), **sans modifier `QuestEscrow`** (figé/testé). Le bonus peut être une quête dédiée "parrainage" financée par seed.
+- Timing : phase d'amorçage (J9-12), couche légère.
+
 ## 7. Anti-sybil / conformité (critique)
 
 Celo + Talent ont des agents anti-farming. Pour rester du bon côté **et** scorer réellement :
