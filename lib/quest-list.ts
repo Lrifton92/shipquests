@@ -112,14 +112,14 @@ async function readAllQuestsOnchain(): Promise<QuestCard[]> {
         abi: QUEST_ESCROW_ABI,
         functionName: "quests",
         args: [id],
-      })) as [
+      })) as readonly [
         `0x${string}`,
         `0x${string}`,
         `0x${string}`,
         bigint,
         bigint,
         bigint,
-        number,
+        bigint,
         number,
       ];
     if (left > 0n && BigInt(deadline) > now) {
