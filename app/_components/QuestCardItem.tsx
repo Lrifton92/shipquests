@@ -34,7 +34,12 @@ export function QuestCardItem({ quest }: { quest: QuestCard }) {
         <span className={`${styles.badge} ${isDaily ? styles.daily : styles.oneshot}`}>
           {isDaily ? t("card.daily") : t("card.oneshot")}
         </span>
-        <span className={styles.days}>{t("card.daysLeft", { n: days })}</span>
+        <span className={styles.topRight}>
+          {quest.actionUrl && (
+            <span className={styles.extLink} aria-hidden>↗</span>
+          )}
+          <span className={styles.days}>{t("card.daysLeft", { n: days })}</span>
+        </span>
       </div>
 
       <h3 className={styles.title}>

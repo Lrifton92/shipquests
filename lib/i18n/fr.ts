@@ -40,6 +40,12 @@ const fr: Dict = {
   "meta.gooddollar.action": "Réclame ton revenu de base GoodDollar aujourd’hui, puis ouvre ta boîte.",
   "meta.ceur.title": "Obtiens des cEUR",
   "meta.ceur.action": "Garde des cEUR dans ton wallet — échange ou reçois un montant, puis réclame.",
+  // Instructions pas à pas (sous l’étape 1 de la page détail)
+  "meta.sendCusd.steps": "Depuis ton wallet (MiniPay ou Rabby sur Celo), envoie n’importe quel montant de cUSD à une autre adresse.",
+  "meta.ubeswap.steps": "Ouvre Ubeswap, connecte ton wallet et fais un swap — même tout petit.",
+  "meta.mento.steps": "Ouvre Mento, connecte ton wallet et échange un stablecoin (par exemple cUSD vers cEUR).",
+  "meta.gooddollar.steps": "Ouvre GoodDollar, connecte-toi et réclame ton revenu de base du jour (G$).",
+  "meta.ceur.steps": "Ouvre Mento, connecte ton wallet et échange des cUSD contre des cEUR — puis garde les cEUR.",
 
   "card.daily": "BOÎTE QUOTIDIENNE",
   "card.oneshot": "UNIQUE",
@@ -56,6 +62,12 @@ const fr: Dict = {
   "quest.reward.hint": "Le montant exact se révèle quand tu ouvres la boîte.",
   "quest.meta.spotsLeft": "Places restantes",
   "quest.meta.actionTarget": "Cible de l’action",
+  // Parcours guidé en 2 étapes
+  "quest.step1.label": "Étape 1 · Fais l’action",
+  "quest.step2.label": "Étape 2 · Réclame ta récompense",
+  "quest.step.doAction": "Faire l’action ↗",
+  "quest.step.fromWallet": "Fais-la depuis ton wallet",
+  "quest.step2.hint": "Action faite ? Touche ci-dessous — on la vérifie onchain, puis on t’envoie ta récompense.",
   "quest.preview": "Quête en aperçu — réclamer nécessite le contrat live.",
   "quest.needs.title": "Fais d’abord l’action",
   "quest.needs.sub": "On n’a pas encore trouvé ton action onchain. Fais-la, puis vérifie à nouveau.",

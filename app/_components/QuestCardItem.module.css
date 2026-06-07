@@ -82,6 +82,21 @@
   border: 1px solid var(--border);
 }
 
+.topRight {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Hint that completing this quest opens an external dapp. */
+.extLink {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--gold);
+  opacity: 0.8;
+}
+
 .days {
   font-size: 11px;
   color: var(--text-3);

@@ -171,6 +171,8 @@ export default function QuestDetail({ params }: { params: Promise<{ id: string }
   const amountNum = claim ? Number(formatUnits(claim.amount, 18)) : 0;
   const questTitle = quest.titleKey ? t(quest.titleKey) : quest.title;
   const questAction = quest.actionKey ? t(quest.actionKey) : quest.action;
+  const stepsText = quest.stepsKey ? t(quest.stepsKey) : questAction;
+  const busy = step === "verifying" || step === "claiming";
 
   return (
     <main className={styles.shell}>
@@ -225,40 +227,72 @@ export default function QuestDetail({ params }: { params: Promise<{ id: string }
             </div>
           )}
 
-          {step === "needsAction" && (
-            <div className={styles.needs}>
-              <div className={styles.needsTitle}>{t("quest.needs.title")}</div>
-              <p>{t("quest.needs.sub")}</p>
+          {/* Step 1 — do the action (dapp link or wallet instruction) */}
+          <section className={styles.stepCard}>
+            <div className={styles.stepHead}>
+              <span className={styles.stepNum} aria-hidden>1</span>
+              <span className={styles.stepLabel}>{t("quest.step1.label")}</span>
+            </div>
+            <p className={styles.stepBody}>{stepsText}</p>
+            {quest.actionUrl ? (
               <a
-                className={styles.needsLink}
-                href={`https://celoscan.io/address/${quest.target}`}
+                className={styles.actionBtn}
+                href={quest.actionUrl}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {t("quest.needs.link")}
+                {t("quest.step.doAction")}
               </a>
+            ) : (
+              <div className={styles.walletHint}>
+                <span aria-hidden>◈</span> {t("quest.step.fromWallet")}
+              </div>
+            )}
+          </section>
+
+          {/* Step 2 — claim (existing flow, restyled) */}
+          <section className={`${styles.stepCard} ${styles.stepClaim}`}>
+            <div className={styles.stepHead}>
+              <span className={styles.stepNum} aria-hidden>2</span>
+              <span className={styles.stepLabel}>{t("quest.step2.label")}</span>
             </div>
-          )}
 
-          {errorText && step !== "needsAction" && <div className={styles.errorMsg}>{errorText}</div>}
+            {step === "needsAction" ? (
+              <div className={styles.needs}>
+                <div className={styles.needsTitle}>{t("quest.needs.title")}</div>
+                <p>{t("quest.needs.sub")}</p>
+                <a
+                  className={styles.needsLink}
+                  href={`https://celoscan.io/address/${quest.target}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {t("quest.needs.link")}
+                </a>
+              </div>
+            ) : (
+              <p className={styles.stepBody}>{t("quest.step2.hint")}</p>
+            )}
 
-          <button
-            className={styles.cta}
-            onClick={() => void run()}
-            disabled={step === "verifying" || step === "claiming" || isMock}
-          >
-            {step === "verifying" && <Spinner />}
-            {step === "claiming" && <Spinner />}
-            {step === "verifying"
-              ? t("quest.cta.verifying")
-              : step === "claiming"
-                ? t("quest.cta.claiming")
-                : step === "needsAction"
-                  ? t("quest.cta.checkAgain")
-                  : isDaily
-                    ? t("quest.cta.openBox")
-                    : t("quest.cta.claim")}
-          </button>
+            {errorText && step !== "needsAction" && <div className={styles.errorMsg}>{errorText}</div>}
+
+            <button
+              className={styles.cta}
+              onClick={() => void run()}
+              disabled={busy || isMock}
+            >
+              {busy && <Spinner />}
+              {step === "verifying"
+                ? t("quest.cta.verifying")
+                : step === "claiming"
+                  ? t("quest.cta.claiming")
+                  : step === "needsAction"
+                    ? t("quest.cta.checkAgain")
+                    : isDaily
+                      ? t("quest.cta.openBox")
+                      : t("quest.cta.claim")}
+            </button>
+          </section>
         </>
       )}
     </main>

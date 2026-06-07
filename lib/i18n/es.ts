@@ -40,6 +40,12 @@ const es: Dict = {
   "meta.gooddollar.action": "Reclama tu renta básica GoodDollar hoy y abre tu caja.",
   "meta.ceur.title": "Consigue algo de cEUR",
   "meta.ceur.action": "Ten cEUR en tu wallet — cambia o recibe cualquier cantidad y reclama.",
+  // Instrucciones paso a paso (bajo el paso 1 de la página de detalle)
+  "meta.sendCusd.steps": "Desde tu wallet (MiniPay o Rabby en Celo), envía cualquier cantidad de cUSD a otra dirección.",
+  "meta.ubeswap.steps": "Abre Ubeswap, conecta tu wallet y haz cualquier swap — aunque sea pequeño.",
+  "meta.mento.steps": "Abre Mento, conecta tu wallet y cambia cualquier stablecoin (por ejemplo cUSD por cEUR).",
+  "meta.gooddollar.steps": "Abre GoodDollar, inicia sesión y reclama tu renta básica del día (G$).",
+  "meta.ceur.steps": "Abre Mento, conecta tu wallet y cambia cUSD por cEUR — luego conserva los cEUR.",
 
   // Tarjeta de misión ----------------------------------------------------
   "card.daily": "CAJA DIARIA",
@@ -57,6 +63,12 @@ const es: Dict = {
   "quest.reward.hint": "El monto exacto se revela cuando abres la caja.",
   "quest.meta.spotsLeft": "Plazas restantes",
   "quest.meta.actionTarget": "Objetivo de la acción",
+  // Flujo guiado en 2 pasos
+  "quest.step1.label": "Paso 1 · Haz la acción",
+  "quest.step2.label": "Paso 2 · Reclama tu recompensa",
+  "quest.step.doAction": "Hacer la acción ↗",
+  "quest.step.fromWallet": "Hazla desde tu wallet",
+  "quest.step2.hint": "¿Ya hiciste la acción? Toca abajo — la verificamos onchain y te enviamos tu recompensa.",
   "quest.preview": "Misión de vista previa — reclamar requiere el contrato en vivo.",
   "quest.needs.title": "Primero completa la acción",
   "quest.needs.sub": "Aún no encontramos tu acción onchain. Hazla y vuelve a verificar.",

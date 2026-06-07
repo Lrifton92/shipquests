@@ -202,9 +202,97 @@
   padding: var(--s-3);
 }
 
+/* Two-step guided flow --------------------------------------------------- */
+.stepCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  padding: var(--s-4);
+}
+
+/* Step 2 carries a faint gold tint to read as the payoff step. */
+.stepClaim {
+  border-color: var(--gold-line);
+  background:
+    radial-gradient(120% 100% at 0% 0%, rgba(252, 255, 82, 0.05) 0%, transparent 50%),
+    var(--surface);
+}
+
+.stepHead {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.stepNum {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--bg);
+  font-size: 13px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.stepLabel {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-2);
+}
+
+.stepBody {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+/* Primary "Do the action ↗" link — full-width, tappable target. */
+.actionBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--gold-line);
+  background: var(--gold-soft);
+  color: var(--gold);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  transition: background 0.16s var(--ease), border-color 0.16s var(--ease), transform 0.12s var(--ease);
+}
+
+.actionBtn:hover {
+  background: var(--surface-hover);
+  border-color: var(--gold);
+}
+.actionBtn:active {
+  transform: scale(0.98);
+}
+
+.walletHint {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--r-md);
+  padding: var(--s-3);
+}
+
 /* CTA -------------------------------------------------------------------- */
 .cta {
-  margin-top: auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;

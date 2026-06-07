@@ -40,6 +40,12 @@ const en = {
   "meta.gooddollar.action": "Claim your GoodDollar UBI today, then open your box.",
   "meta.ceur.title": "Get some cEUR",
   "meta.ceur.action": "Hold cEUR in your wallet — swap or receive any amount, then claim.",
+  // Step-by-step instructions (shown under step 1 on the detail page)
+  "meta.sendCusd.steps": "From your wallet (MiniPay or Rabby on Celo), send any amount of cUSD to another address.",
+  "meta.ubeswap.steps": "Open Ubeswap, connect your wallet, and make any swap — even a tiny one.",
+  "meta.mento.steps": "Open Mento, connect your wallet, and swap any stablecoin (for example cUSD to cEUR).",
+  "meta.gooddollar.steps": "Open GoodDollar, sign in, and claim your daily basic income (G$).",
+  "meta.ceur.steps": "Open Mento, connect your wallet, and swap cUSD for cEUR — then keep the cEUR.",
 
   // Quest card -----------------------------------------------------------
   "card.daily": "DAILY BOX",
@@ -57,6 +63,12 @@ const en = {
   "quest.reward.hint": "The exact amount is revealed when you open the box.",
   "quest.meta.spotsLeft": "Spots left",
   "quest.meta.actionTarget": "Action target",
+  // Two-step guided flow
+  "quest.step1.label": "Step 1 · Do the action",
+  "quest.step2.label": "Step 2 · Claim your reward",
+  "quest.step.doAction": "Do the action ↗",
+  "quest.step.fromWallet": "Do it from your wallet",
+  "quest.step2.hint": "Done the action? Tap below — we verify it onchain, then send your reward.",
   "quest.preview": "Preview quest — claiming needs the live contract.",
   "quest.needs.title": "Complete the action first",
   "quest.needs.sub": "We couldn’t find your onchain action yet. Do it, then verify again.",

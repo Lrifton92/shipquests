@@ -21,6 +21,10 @@ export type QuestCard = {
   titleKey?: keyof Dict;
   /** i18n key for the action, set when the target has known metadata. */
   actionKey?: keyof Dict;
+  /** Direct link to the dapp where the action is done (known targets only). */
+  actionUrl?: string;
+  /** i18n key for step-by-step instructions (known targets only). */
+  stepsKey?: keyof Dict;
   /** Decorative glyph for known targets. */
   icon?: string;
   target: `0x${string}`;
@@ -91,7 +95,7 @@ function kindFromUint(k: number): QuestKind {
 function copyForTarget(
   id: string,
   target: string,
-): Pick<QuestCard, "title" | "action" | "titleKey" | "actionKey" | "icon"> {
+): Pick<QuestCard, "title" | "action" | "titleKey" | "actionKey" | "actionUrl" | "stepsKey" | "icon"> {
   const meta = questMetaFor(target);
   if (!meta) {
     return {
@@ -104,6 +108,8 @@ function copyForTarget(
     action: en[meta.actionKey],
     titleKey: meta.titleKey,
     actionKey: meta.actionKey,
+    actionUrl: meta.actionUrl,
+    stepsKey: meta.stepsKey,
     icon: meta.icon,
   };
 }

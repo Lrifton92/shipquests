@@ -19,6 +19,15 @@ export type QuestMeta = {
   actionKey: keyof Dict;
   /** Decorative glyph shown next to the title. */
   icon: string;
+  /**
+   * Direct link to the dapp where the player performs the action. When set, the
+   * detail page shows a primary "Do the action ↗" button opening this URL in a
+   * new tab. Omitted for actions done from the wallet itself (e.g. a cUSD send),
+   * where the player follows the textual step instead.
+   */
+  actionUrl?: string;
+  /** i18n key for the step-by-step instructions shown under step 1. */
+  stepsKey?: keyof Dict;
 };
 
 // Celo mainnet targets — every address below is a real, verified contract
@@ -30,30 +39,40 @@ const META: Record<string, QuestMeta> = {
     titleKey: "meta.sendCusd.title",
     actionKey: "meta.sendCusd.action",
     icon: "↗",
+    // No third-party dapp: the action is a plain wallet send.
+    stepsKey: "meta.sendCusd.steps",
   },
   // Ubeswap V2 router.
   "0xe3d8bd6aed4f159bc8000a9cd47cffdb95f96121": {
     titleKey: "meta.ubeswap.title",
     actionKey: "meta.ubeswap.action",
     icon: "⇄",
+    actionUrl: "https://app.ubeswap.org",
+    stepsKey: "meta.ubeswap.steps",
   },
   // Mento Broker (stablecoin swaps).
   "0x777a8255ca72412f0d706dc03c9d1987306b4cad": {
     titleKey: "meta.mento.title",
     actionKey: "meta.mento.action",
     icon: "◎",
+    actionUrl: "https://app.mento.org",
+    stepsKey: "meta.mento.steps",
   },
   // GoodDollar (G$) token — daily UBI claims live here.
   "0x62b8b11039fcfe5ab0c56e502b1c372a3d2a9c7a": {
     titleKey: "meta.gooddollar.title",
     actionKey: "meta.gooddollar.action",
     icon: "✦",
+    actionUrl: "https://gooddapp.org",
+    stepsKey: "meta.gooddollar.steps",
   },
   // cEUR stablecoin token — canonical Celo address.
   "0xd8763cba276a3738e6de85b4b3bf5fded6d6ca73": {
     titleKey: "meta.ceur.title",
     actionKey: "meta.ceur.action",
     icon: "€",
+    actionUrl: "https://app.mento.org",
+    stepsKey: "meta.ceur.steps",
   },
 };
 
