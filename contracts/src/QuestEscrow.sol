@@ -85,6 +85,10 @@ contract QuestEscrow {
         require(amount >= q.minReward && amount <= q.maxReward, "amount oob");
         if (q.kind == Kind.OneShot) {
             require(lastClaim[questId][msg.sender] == 0, "already claimed");
+        } else {
+            uint256 last = lastClaim[questId][msg.sender];
+            // last == 0 means never claimed: first daily claim is always allowed.
+            require(last == 0 || block.timestamp >= last + 24 hours, "cooldown");
         }
         bytes32 structHash = keccak256(abi.encode(CLAIM_TYPEHASH, questId, msg.sender, amount, deadline));
         bytes32 digest = keccak256(abi.encodePacked("\x19\x01", domainSeparator, structHash));

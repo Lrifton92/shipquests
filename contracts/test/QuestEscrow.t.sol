@@ -76,4 +76,65 @@ contract QuestEscrowTest is Test {
         vm.expectRevert(bytes("already claimed"));
         esc.claim(id, 2e18, dl, sig2);
     }
+
+    // --- Task 4: daily cooldown + bounds + signer ---------------------------
+
+    function test_claim_daily_cooldown() public {
+        vm.prank(sponsor);
+        uint256 id = esc.createQuest(
+            target, address(cusd), 1e18, 5e18, 10, QuestEscrow.Kind.Daily, uint64(block.timestamp + 30 days)
+        );
+        uint256 dl = block.timestamp + 1 hours;
+        bytes memory sig = _sign(id, user, 3e18, dl);
+        vm.prank(user);
+        esc.claim(id, 3e18, dl, sig);
+        // immediate second claim reverts (cooldown)
+        uint256 dl2 = block.timestamp + 1 hours;
+        bytes memory sig2 = _sign(id, user, 3e18, dl2);
+        vm.prank(user);
+        vm.expectRevert(bytes("cooldown"));
+        esc.claim(id, 3e18, dl2, sig2);
+        // after 24h it works again
+        vm.warp(block.timestamp + 24 hours);
+        uint256 dl3 = block.timestamp + 1 hours;
+        bytes memory sig3 = _sign(id, user, 4e18, dl3);
+        vm.prank(user);
+        esc.claim(id, 4e18, dl3, sig3);
+        assertEq(cusd.balanceOf(user), 7e18);
+    }
+
+    function test_claim_amountOutOfBounds_reverts() public {
+        vm.prank(sponsor);
+        uint256 id = esc.createQuest(
+            target, address(cusd), 1e18, 5e18, 10, QuestEscrow.Kind.Daily, uint64(block.timestamp + 30 days)
+        );
+        uint256 dl = block.timestamp + 1 hours;
+        bytes memory sig = _sign(id, user, 9e18, dl); // above maxReward
+        vm.prank(user);
+        vm.expectRevert(bytes("amount oob"));
+        esc.claim(id, 9e18, dl, sig);
+    }
+
+    function test_claim_wrongSigner_reverts() public {
+        vm.prank(sponsor);
+        uint256 id = esc.createQuest(
+            target, address(cusd), 2e18, 2e18, 3, QuestEscrow.Kind.OneShot, uint64(block.timestamp + 1 days)
+        );
+        uint256 dl = block.timestamp + 1 hours;
+        bytes32 domain = esc.domainSeparator();
+        bytes32 sh = keccak256(
+            abi.encode(
+                keccak256("Claim(uint256 questId,address wallet,uint256 amount,uint256 deadline)"),
+                id,
+                user,
+                uint256(2e18),
+                dl
+            )
+        );
+        bytes32 digest = keccak256(abi.encodePacked("\x19\x01", domain, sh));
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(0xBAD, digest); // wrong key
+        vm.prank(user);
+        vm.expectRevert(bytes("bad sig"));
+        esc.claim(id, 2e18, dl, abi.encodePacked(r, s, v));
+    }
 }
