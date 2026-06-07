@@ -123,6 +123,7 @@ export function BottomNav() {
                   {tab.icon(active)}
                 </span>
                 <span className={styles.label}>{t(tab.labelKey)}</span>
+                <span className={styles.underline} aria-hidden />
               </Link>
             </li>
           );

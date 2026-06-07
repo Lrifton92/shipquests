@@ -334,6 +334,7 @@
 
 /* Success / reveal ------------------------------------------------------- */
 .success {
+  position: relative;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -342,9 +343,73 @@
   text-align: center;
   gap: var(--s-3);
   padding: var(--s-6) 0;
+  isolation: isolate;
+}
+
+/* Soft gold halo that flashes in then settles to a slow breath behind the amount.
+   One-shot flash + gentle infinite breathe — the "cockpit validates a reward" glow. */
+.successHalo {
+  position: absolute;
+  z-index: 0;
+  top: 38%;
+  left: 50%;
+  width: 360px;
+  height: 360px;
+  transform: translate(-50%, -50%) scale(0.6);
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--gold-glow) 0%, transparent 62%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.successOn .successHalo {
+  animation:
+    haloFlash 1s var(--ease) both,
+    haloBreathe 4.5s ease-in-out 1s infinite;
+}
+
+@keyframes haloFlash {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
+  35% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+  100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes haloBreathe {
+  0%, 100% { opacity: 0.32; transform: translate(-50%, -50%) scale(0.98); }
+  50% { opacity: 0.55; transform: translate(-50%, -50%) scale(1.04); }
+}
+
+/* Animated success check (one-shot tier) ---------------------------------- */
+.check {
+  position: relative;
+  z-index: 2;
+  color: var(--mint);
+  margin-bottom: var(--s-1);
+}
+.checkRing {
+  stroke-dasharray: 151;
+  stroke-dashoffset: 151;
+}
+.checkMark {
+  stroke-dasharray: 40;
+  stroke-dashoffset: 40;
+}
+.successOn .checkRing {
+  animation: drawRing 0.5s var(--ease) 0.05s forwards;
+}
+.successOn .checkMark {
+  animation: drawMark 0.4s var(--ease) 0.4s forwards;
+}
+@keyframes drawRing {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes drawMark {
+  to { stroke-dashoffset: 0; }
 }
 
 .successLabel {
+  position: relative;
+  z-index: 2;
   font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 0.18em;
@@ -352,6 +417,8 @@
 }
 
 .successAmount {
+  position: relative;
+  z-index: 2;
   font-size: 56px;
   line-height: 1;
   font-weight: 800;
@@ -361,6 +428,16 @@
   align-items: baseline;
   gap: 6px;
   text-shadow: 0 0 30px var(--gold-glow);
+}
+
+/* Amount punches in with a gold glow as the count-up runs. */
+.successOn .successAmount {
+  animation: amountPop 0.6s var(--ease) 0.15s both;
+}
+@keyframes amountPop {
+  0% { opacity: 0; transform: scale(0.8); text-shadow: 0 0 0 var(--gold-glow); }
+  60% { transform: scale(1.06); text-shadow: 0 0 44px var(--gold-glow); }
+  100% { opacity: 1; transform: scale(1); text-shadow: 0 0 30px var(--gold-glow); }
 }
 
 .successUnit {
@@ -514,6 +591,30 @@
 @keyframes shimmer {
   to {
     background-position: -200% 0;
+  }
+}
+
+/* Reduced motion — show the success state statically: no burst (RewardBurst
+   already no-ops), no halo/check/amount animation. Everything visible at once. */
+@media (prefers-reduced-motion: reduce) {
+  .successHalo {
+    opacity: 0.4;
+    transform: translate(-50%, -50%) scale(1);
+    animation: none;
+  }
+  .checkRing,
+  .checkMark {
+    stroke-dashoffset: 0;
+  }
+  .successOn .checkRing,
+  .successOn .checkMark,
+  .successOn .successAmount,
+  .successOn .successHalo {
+    animation: none;
+  }
+  .successAmount {
+    opacity: 1;
+    transform: none;
   }
 }
 

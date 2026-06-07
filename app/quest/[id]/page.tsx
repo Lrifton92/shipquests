@@ -9,6 +9,7 @@ import { ensureCelo } from "../../_components/ensureCelo";
 import { WalletChip } from "../../_components/WalletChip";
 import { Arrow } from "../../_components/Arrow";
 import { CountUp } from "../../_components/CountUp";
+import { RewardBurst } from "../../_components/RewardBurst";
 import { useT } from "../../_components/i18n";
 import type { Dict } from "@/lib/i18n/en";
 import {
@@ -328,12 +329,21 @@ function SuccessView({
 }) {
   const decimals = amountNum < 1 ? 4 : 2;
   return (
-    <div className={styles.success}>
-      {isDaily && (
+    <div className={`${styles.success} ${revealed ? styles.successOn : ""}`}>
+      <RewardBurst fireKey={revealed} />
+      <div className={styles.successHalo} aria-hidden />
+      {isDaily ? (
         <div className={`${styles.box} ${revealed ? styles.boxOpen : ""}`} aria-hidden>
           <div className={styles.boxLid} />
           <div className={styles.boxBody} />
           <div className={styles.boxBurst} />
+        </div>
+      ) : (
+        <div className={styles.check} aria-hidden>
+          <svg viewBox="0 0 52 52" width="52" height="52">
+            <circle className={styles.checkRing} cx="26" cy="26" r="24" fill="none" stroke="currentColor" strokeWidth="2.5" />
+            <path className={styles.checkMark} d="M15 27l8 8 15-16" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
         </div>
       )}
       <div className={styles.successLabel}>{isDaily ? t("quest.success.boxOpened") : t("quest.success.claimed")}</div>

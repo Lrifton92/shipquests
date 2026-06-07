@@ -86,8 +86,101 @@
   letter-spacing: 0.02em;
 }
 
+/* Animated active indicator (a thin gold underline that grows in).
+ * Hidden on mobile (keeps the compact look); revealed on desktop. */
+.underline {
+  display: none;
+}
+
 @media (hover: hover) and (pointer: fine) {
   .tab:not(.active):hover {
     color: var(--text-2);
+  }
+}
+
+/* ───────────────────────── Desktop — larger bar + icons ─────────────────────
+ * Mobile is untouched: everything below only applies at ≥768px. */
+@media (min-width: 768px) {
+  .list {
+    max-width: 640px;
+  }
+
+  .tab {
+    gap: var(--s-1);
+    padding: 14px 8px 12px;
+    min-height: 72px;
+    /* Smooth color + lift on the whole tab. */
+    transition: color 0.2s var(--ease), transform 0.2s var(--ease);
+  }
+
+  .iconWrap {
+    width: 48px;
+    height: 34px;
+  }
+
+  /* Scale up the inline 22px SVGs to ~26px without touching markup. */
+  .iconWrap svg {
+    transform: scale(1.18);
+  }
+  .active .iconWrap svg {
+    transform: scale(1.18) translateY(-1px);
+  }
+
+  .glow {
+    inset: -8px;
+  }
+
+  .label {
+    font-size: 12px;
+    letter-spacing: 0.03em;
+  }
+
+  /* Animated underline indicator under the active tab. */
+  .underline {
+    display: block;
+    width: 0;
+    height: 2px;
+    margin-top: 3px;
+    border-radius: var(--r-pill);
+    background: var(--gold);
+    box-shadow: 0 0 8px var(--gold-glow);
+    transition: width 0.28s var(--ease), opacity 0.28s var(--ease);
+    opacity: 0;
+  }
+  .active .underline {
+    width: 22px;
+    opacity: 1;
+  }
+}
+
+/* Desktop hover: subtle lift + gold tint + glow on inactive tabs. */
+@media (min-width: 768px) and (hover: hover) and (pointer: fine) {
+  .tab:not(.active):hover {
+    transform: translateY(-2px);
+  }
+  .tab:not(.active):hover .iconWrap svg {
+    transform: scale(1.18);
+    filter: drop-shadow(0 0 6px var(--gold-glow));
+  }
+  .tab:not(.active):hover .underline {
+    width: 14px;
+    opacity: 0.5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tab,
+  .iconWrap svg,
+  .active .iconWrap svg,
+  .underline {
+    transition: none !important;
+    transform: none !important;
+  }
+  @media (min-width: 768px) {
+    /* Keep the scaled icons (static, not a motion), drop only the lift. */
+    .iconWrap svg,
+    .active .iconWrap svg {
+      transform: scale(1.18) !important;
+    }
   }
 }

@@ -1,0 +1,64 @@
+/* Cursor-following spotlight on the deep-black background (desktop only).
+ * Two fixed layers behind the content: a soft gold halo + a faint techno dot
+ * grid that only lights up within the cursor's radius. GPU-friendly:
+ * we animate background-position via CSS vars (--mx/--my), no layout. */
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: -1; /* behind content, above body::before/after halos */
+  pointer-events: none;
+  opacity: 0;
+  /* Fade in once the first mousemove arrives (set by JS). */
+  transition: opacity 0.5s var(--ease);
+}
+.root.on {
+  opacity: 1;
+}
+
+/* Layer 1 — soft gold spotlight following the cursor. */
+.halo {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    240px 240px at var(--mx, 50%) var(--my, 40%),
+    rgba(252, 255, 82, 0.07) 0%,
+    rgba(251, 204, 92, 0.04) 38%,
+    transparent 70%
+  );
+  will-change: background;
+}
+
+/* Layer 2 — faint techno dot grid, revealed only near the cursor via mask. */
+.grid {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(252, 255, 82, 0.5) 1px, transparent 1.4px);
+  background-size: 26px 26px;
+  opacity: 0.16;
+  -webkit-mask-image: radial-gradient(
+    200px 200px at var(--mx, 50%) var(--my, 40%),
+    #000 0%,
+    rgba(0, 0, 0, 0.35) 45%,
+    transparent 72%
+  );
+  mask-image: radial-gradient(
+    200px 200px at var(--mx, 50%) var(--my, 40%),
+    #000 0%,
+    rgba(0, 0, 0, 0.35) 45%,
+    transparent 72%
+  );
+  will-change: mask-image;
+}
+
+/* Hard off-switch for touch/coarse pointers and reduced-motion — defence in
+ * depth on top of the JS guard (component never mounts the listener there). */
+@media (hover: none), (pointer: coarse) {
+  .root {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .root {
+    display: none;
+  }
+}

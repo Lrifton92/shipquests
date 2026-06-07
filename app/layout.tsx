@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { BottomNav } from "./_components/BottomNav";
+import { CursorGlow } from "./_components/CursorGlow";
 import { Providers } from "./_components/Providers";
 
 const sans = Inter({
@@ -41,6 +42,7 @@ export default function RootLayout({
     <html lang="en" className={`${sans.variable} ${mono.variable}`}>
       <body>
         <Providers>
+          <CursorGlow />
           {children}
           <BottomNav />
         </Providers>

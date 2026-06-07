@@ -7,12 +7,14 @@
 // then runs the same attest→claim flow as a normal quest, inline.
 import { useCallback, useEffect, useState, type CSSProperties } from "react";
 import { celo } from "viem/chains";
-import { createPublicClient, http } from "viem";
+import { createPublicClient, http, formatUnits } from "viem";
 import styles from "./invite.module.css";
 import { useMiniPay } from "../_components/useMiniPay";
 import { ensureCelo } from "../_components/ensureCelo";
 import { useT } from "../_components/i18n";
 import { Arrow } from "../_components/Arrow";
+import { CountUp } from "../_components/CountUp";
+import { RewardBurst } from "../_components/RewardBurst";
 import { formatCusd } from "@/lib/quest-list";
 import { QUEST_ESCROW_ABI, QUEST_ESCROW_ADDRESS } from "@/lib/quest-abi";
 
@@ -49,6 +51,10 @@ export default function Invite() {
   const [nowSec, setNowSec] = useState(0);
   const [phase, setPhase] = useState<Phase>("idle");
   const [errorText, setErrorText] = useState("");
+  // Amount captured at the moment of the successful claim (owed gets reset by the
+  // stats refresh right after), plus a one-shot reveal flag to fire the celebration.
+  const [claimedNum, setClaimedNum] = useState(0);
+  const [revealed, setRevealed] = useState(false);
 
   useEffect(() => {
     setOrigin(window.location.origin);
@@ -203,7 +209,11 @@ export default function Invite() {
         args: [BigInt(REFERRAL_QUEST_ID), data.amount, data.deadline, data.signature],
       });
       await publicClient.waitForTransactionReceipt({ hash });
+      // Capture the claimed amount before the stats refresh resets `owed` to 0.
+      setClaimedNum(Number(formatUnits(data.amount, 18)));
       setPhase("success");
+      // Fire the celebration on the next frame (matches the quest reveal pattern).
+      requestAnimationFrame(() => setRevealed(true));
       await Promise.all([loadStats(), loadCooldown()]);
     } catch (e) {
       const msg = (e instanceof Error ? e.message : String(e)).toLowerCase();
@@ -279,6 +289,24 @@ export default function Invite() {
               <span className={styles.rateChip}>{t("referral.bonus.rate", { pct })}</span>
             </div>
 
+            {phase === "success" ? (
+              <div className={`${styles.bonusSuccess} ${revealed ? styles.bonusSuccessOn : ""}`}>
+                <RewardBurst fireKey={revealed} />
+                <div className={styles.bonusHalo} aria-hidden />
+                <div className={styles.bonusCheck} aria-hidden>
+                  <svg viewBox="0 0 52 52" width="44" height="44">
+                    <circle className={styles.bonusCheckRing} cx="26" cy="26" r="24" fill="none" stroke="currentColor" strokeWidth="2.5" />
+                    <path className={styles.bonusCheckMark} d="M15 27l8 8 15-16" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
+                <div className={styles.bonusSuccessLabel}>{t("referral.bonus.claimed")}</div>
+                <div className={`${styles.bonusSuccessAmount} mono`}>
+                  +<CountUp value={claimedNum} decimals={claimedNum < 1 ? 4 : 2} />
+                  <span className={styles.bonusUnit}>cUSD</span>
+                </div>
+              </div>
+            ) : (
+              <>
             <div className={styles.bonusAmount}>
               <span className={`${styles.bonusValue} mono`}>{formatCusd(owed)}</span>
               <span className={styles.bonusUnit}>cUSD</span>
@@ -309,7 +337,7 @@ export default function Invite() {
               </div>
             </div>
 
-            {owed === 0n && phase !== "success" ? (
+            {owed === 0n ? (
               <p className={styles.note}>{t("referral.bonus.none")}</p>
             ) : (
               <button
@@ -322,6 +350,8 @@ export default function Invite() {
               </button>
             )}
             {errorText && <p className={styles.errorMsg}>{errorText}</p>}
+              </>
+            )}
           </section>
 
           {/* How it works ------------------------------------------------- */}

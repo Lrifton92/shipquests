@@ -116,6 +116,15 @@ main {
   padding-bottom: calc(var(--nav-h) + var(--s-6) + env(safe-area-inset-bottom, 0px)) !important;
 }
 
+/* Desktop: the bottom nav grows (see BottomNav.module.css → min-height 72px).
+ * Bump --nav-h so <main>'s padding-bottom keeps the same clearance — nothing
+ * hides behind the taller bar. Mobile (<768px) keeps --nav-h: 64px. */
+@media (min-width: 768px) {
+  :root {
+    --nav-h: 80px;
+  }
+}
+
 /* Per-route page transition. Driven by app/template.tsx remounting on nav. */
 @keyframes pageEnter {
   from { opacity: 0; transform: translate3d(0, 18px, 0) scale(0.985); }
