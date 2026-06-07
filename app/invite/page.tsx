@@ -43,6 +43,7 @@ export default function Invite() {
   const { address, client, connect, connecting, hasProvider } = useMiniPay();
   const [copied, setCopied] = useState(false);
   const [stats, setStats] = useState<Stats | null>(null);
+  const [code, setCode] = useState<string | null>(null);
   const [origin, setOrigin] = useState("");
   const [lastClaimSec, setLastClaimSec] = useState<number | null>(null);
   const [nowSec, setNowSec] = useState(0);
@@ -60,8 +61,9 @@ export default function Invite() {
     return () => clearInterval(id);
   }, []);
 
-  // The share link encodes the connected wallet as the sponsor.
-  const link = address ? `${origin}?ref=${address}` : "";
+  // The share link uses the sponsor's short invite code when available, and falls
+  // back to the raw wallet address (works the same via the capture/link route).
+  const link = address ? `${origin}?ref=${code ?? address}` : "";
 
   const loadStats = useCallback(async () => {
     if (!address) return;
@@ -70,6 +72,16 @@ export default function Invite() {
       if (res.ok) setStats((await res.json()) as Stats);
     } catch {
       /* stats stay null — the card shows zeros */
+    }
+  }, [address]);
+
+  const loadCode = useCallback(async () => {
+    if (!address) return;
+    try {
+      const res = await fetch(`/api/referral/code?wallet=${address}`);
+      if (res.ok) setCode(((await res.json()) as { code: string | null }).code);
+    } catch {
+      /* code stays null — link falls back to the raw address */
     }
   }, [address]);
 
@@ -91,7 +103,8 @@ export default function Invite() {
   useEffect(() => {
     void loadStats();
     void loadCooldown();
-  }, [loadStats, loadCooldown]);
+    void loadCode();
+  }, [loadStats, loadCooldown, loadCode]);
 
   const copy = async () => {
     if (!link) return;

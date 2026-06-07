@@ -14,9 +14,13 @@
 import { useEffect, useState } from "react";
 import { isAddress } from "viem";
 import { useMiniPay } from "./useMiniPay";
+import { isRefCode } from "@/lib/ref-code";
 
 const REF_KEY = "shipquests-ref";
 const LINKED_KEY = "shipquests-ref-linked";
+
+// A ?ref token is either a short invite code or a raw wallet address (legacy).
+const isRefToken = (s: string) => isAddress(s) || isRefCode(s);
 
 function readStored(): string | null {
   try {
@@ -36,7 +40,7 @@ export function useReferralCapture(): { ref: string | null; wasReferred: boolean
     try {
       const url = new URL(window.location.href);
       const fromUrl = url.searchParams.get("ref");
-      if (fromUrl && isAddress(fromUrl)) {
+      if (fromUrl && isRefToken(fromUrl)) {
         captured = fromUrl;
         localStorage.setItem(REF_KEY, fromUrl);
         // Strip ?ref from the address bar without a navigation/reload.
@@ -53,8 +57,10 @@ export function useReferralCapture(): { ref: string | null; wasReferred: boolean
   useEffect(() => {
     if (!address) return;
     const stored = readStored();
-    if (!stored || !isAddress(stored)) return;
-    if (stored.toLowerCase() === address.toLowerCase()) return; // no self-referral
+    if (!stored || !isRefToken(stored)) return;
+    // Self-referral by raw address is caught here; code self-referral is caught
+    // server-side after the code resolves to the sponsor wallet.
+    if (isAddress(stored) && stored.toLowerCase() === address.toLowerCase()) return;
     let alreadyLinked = false;
     try {
       alreadyLinked = localStorage.getItem(LINKED_KEY) === address.toLowerCase();

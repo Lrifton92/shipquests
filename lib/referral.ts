@@ -32,6 +32,7 @@
 //   - owed is clamped to >= 0 (a sponsor can never be owed less-than-zero).
 
 import { createClient, type VercelKV } from "@vercel/kv";
+import { generateCode } from "./ref-code";
 
 /** Sponsor's share of referee earnings, in percent. Env-tunable, default 10. */
 export const REFERRAL_PCT = Number(process.env.NEXT_PUBLIC_REFERRAL_PCT ?? "10");
@@ -75,6 +76,47 @@ const sponsorKey = (referee: string) => `ref:sponsor:${norm(referee)}`;
 const activeKey = (sponsor: string) => `ref:active:${norm(sponsor)}`;
 const earnedKey = (sponsor: string) => `ref:earned:${norm(sponsor)}`;
 const paidKey = (sponsor: string) => `ref:paid:${norm(sponsor)}`;
+const codeKey = (code: string) => `ref:code:${code.toUpperCase()}`;
+const codeOfKey = (wallet: string) => `ref:codeof:${norm(wallet)}`;
+
+/**
+ * The sponsor's stable invite code. Generated once and never changed: returns the
+ * existing code if the wallet already has one, otherwise mints a fresh unique code
+ * (claimed via SET NX, retried on the astronomically rare collision) and binds it
+ * to the wallet (also NX, so the wallet's code is immutable). Returns null if KV is
+ * absent — the Invite UI then falls back to the raw ?ref=<wallet> link.
+ */
+export async function getOrCreateCode(wallet: string): Promise<string | null> {
+  const c = kv();
+  if (!c) return null;
+  try {
+    const existing = await c.get<string>(codeOfKey(wallet));
+    if (existing) return existing;
+    for (let i = 0; i < 6; i++) {
+      const code = generateCode();
+      const claimed = await c.set(codeKey(code), norm(wallet), { nx: true });
+      if (claimed !== "OK") continue; // collision — try another code
+      const bound = await c.set(codeOfKey(wallet), code, { nx: true });
+      if (bound === "OK") return code;
+      // A concurrent request already bound a code to this wallet — use that one.
+      return (await c.get<string>(codeOfKey(wallet))) ?? code;
+    }
+    return null; // could not find a free code (practically impossible)
+  } catch {
+    return null;
+  }
+}
+
+/** Resolve an invite code to its sponsor wallet, or null if unknown / KV absent. */
+export async function resolveCode(code: string): Promise<string | null> {
+  const c = kv();
+  if (!c) return null;
+  try {
+    return await c.get<string>(codeKey(code));
+  } catch {
+    return null;
+  }
+}
 
 /**
  * Pose the sponsor of a referee, only if not already set and referee !== sponsor.
