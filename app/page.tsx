@@ -4,11 +4,13 @@ import styles from "./page.module.css";
 import { useMiniPay } from "./_components/useMiniPay";
 import { WalletChip } from "./_components/WalletChip";
 import { QuestCardItem } from "./_components/QuestCardItem";
+import { useT } from "./_components/i18n";
 import { listQuests, type QuestCard } from "@/lib/quest-list";
 
 type LoadState = "loading" | "ready" | "error";
 
 export default function Home() {
+  const t = useT();
   const { address, connect, connecting, hasProvider } = useMiniPay();
   const [state, setState] = useState<LoadState>("loading");
   const [quests, setQuests] = useState<QuestCard[]>([]);
@@ -48,24 +50,22 @@ export default function Home() {
       </header>
 
       <section className={styles.hero}>
-        <div className={styles.heroLabel}>Earn rewards</div>
+        <div className={styles.heroLabel}>{t("home.hero.label")}</div>
         <div className={styles.heroValue}>
           <span className="mono">cUSD</span>
-          <span className={styles.heroUnit}>on Celo</span>
+          <span className={styles.heroUnit}>{t("home.hero.unit")}</span>
         </div>
-        <p className={styles.heroSub}>
-          Do a simple action, get verified onchain, claim your reward. No fees, no jargon.
-        </p>
+        <p className={styles.heroSub}>{t("home.hero.sub")}</p>
       </section>
 
       {isMock && (
         <div className={styles.notice}>
-          <span aria-hidden>●</span> Preview quests — the live contract isn&apos;t deployed yet.
+          <span aria-hidden>●</span> {t("home.preview")}
         </div>
       )}
 
       <div className={styles.sectionTitle}>
-        <span>Available quests</span>
+        <span>{t("home.available")}</span>
         {state === "ready" && <span className={styles.count}>{quests.length}</span>}
       </div>
 
@@ -82,10 +82,10 @@ export default function Home() {
           <div className={styles.emptyIcon} aria-hidden>
             ⚠
           </div>
-          <div className={styles.emptyTitle}>Couldn&apos;t load quests</div>
-          <p>Check your connection and try again.</p>
+          <div className={styles.emptyTitle}>{t("home.error.title")}</div>
+          <p>{t("home.error.sub")}</p>
           <button className={styles.retry} onClick={() => void load()}>
-            Retry
+            {t("common.retry")}
           </button>
         </div>
       )}
@@ -95,8 +95,8 @@ export default function Home() {
           <div className={styles.emptyIcon} aria-hidden>
             ◇
           </div>
-          <div className={styles.emptyTitle}>No quests right now</div>
-          <p>New quests drop regularly. Check back soon.</p>
+          <div className={styles.emptyTitle}>{t("home.empty.title")}</div>
+          <p>{t("home.empty.sub")}</p>
         </div>
       )}
 

@@ -11,6 +11,7 @@ import { createPublicClient, http } from "viem";
 import styles from "./history.module.css";
 import { useMiniPay } from "../_components/useMiniPay";
 import { WalletChip } from "../_components/WalletChip";
+import { useT, useLang } from "../_components/i18n";
 import { rewardLabel } from "@/lib/quest-list";
 import { QUEST_ESCROW_ABI, QUEST_ESCROW_ADDRESS } from "@/lib/quest-abi";
 
@@ -31,9 +32,9 @@ type Entry = {
 
 type State = "idle" | "loading" | "ready" | "error";
 
-function fmtDate(ts: number): string {
-  // Local short date+time. ts is unix seconds.
-  return new Date(ts * 1000).toLocaleString(undefined, {
+function fmtDate(ts: number, locale: string): string {
+  // Short date+time in the app's language. ts is unix seconds.
+  return new Date(ts * 1000).toLocaleString(locale, {
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -87,6 +88,8 @@ async function readHistory(wallet: `0x${string}`): Promise<Entry[]> {
 }
 
 export default function History() {
+  const t = useT();
+  const { lang } = useLang();
   const { address, connect, connecting, hasProvider } = useMiniPay();
   const [state, setState] = useState<State>("idle");
   const [entries, setEntries] = useState<Entry[]>([]);
@@ -111,7 +114,7 @@ export default function History() {
   return (
     <main className={styles.shell}>
       <header className={styles.head}>
-        <h1 className={styles.title}>History</h1>
+        <h1 className={styles.title}>{t("history.title")}</h1>
         <WalletChip
           address={address}
           connecting={connecting}
@@ -119,7 +122,7 @@ export default function History() {
           onConnect={() => void connect()}
         />
       </header>
-      <p className={styles.sub}>Quests you&apos;ve completed and claimed.</p>
+      <p className={styles.sub}>{t("history.sub")}</p>
 
       {/* Not connected -------------------------------------------------- */}
       {!address && (
@@ -127,11 +130,11 @@ export default function History() {
           <div className={styles.emptyIcon} aria-hidden>
             ◇
           </div>
-          <div className={styles.emptyTitle}>Connect to see your history</div>
-          <p>Your completed quests will appear here once your wallet is connected.</p>
+          <div className={styles.emptyTitle}>{t("history.connect.title")}</div>
+          <p>{t("history.connect.sub")}</p>
           {hasProvider && (
             <button className={styles.cta} onClick={() => void connect()} disabled={connecting}>
-              {connecting ? "Connecting…" : "Connect wallet"}
+              {connecting ? t("wallet.connecting") : t("wallet.connectFull")}
             </button>
           )}
         </div>
@@ -143,8 +146,8 @@ export default function History() {
           <div className={styles.emptyIcon} aria-hidden>
             ●
           </div>
-          <div className={styles.emptyTitle}>History is live after launch</div>
-          <p>Once the contract is deployed, your claims show up here automatically.</p>
+          <div className={styles.emptyTitle}>{t("history.mock.title")}</div>
+          <p>{t("history.mock.sub")}</p>
         </div>
       )}
 
@@ -162,10 +165,10 @@ export default function History() {
           <div className={styles.emptyIcon} aria-hidden>
             ⚠
           </div>
-          <div className={styles.emptyTitle}>Couldn&apos;t load history</div>
-          <p>Check your connection and try again.</p>
+          <div className={styles.emptyTitle}>{t("history.error.title")}</div>
+          <p>{t("history.error.sub")}</p>
           <button className={styles.cta} onClick={() => void load()}>
-            Retry
+            {t("common.retry")}
           </button>
         </div>
       )}
@@ -176,10 +179,10 @@ export default function History() {
           <div className={styles.emptyIcon} aria-hidden>
             ◇
           </div>
-          <div className={styles.emptyTitle}>No quests completed yet</div>
-          <p>Complete your first quest and your claim shows up here.</p>
+          <div className={styles.emptyTitle}>{t("history.empty.title")}</div>
+          <p>{t("history.empty.sub")}</p>
           <Link href="/" className={styles.cta}>
-            Browse quests
+            {t("history.empty.cta")}
           </Link>
         </div>
       )}
@@ -203,14 +206,14 @@ export default function History() {
                 </span>
                 <div className={styles.rowMain}>
                   <span className={styles.rowTitle}>
-                    Quest #{e.id}
-                    {e.kind === 1 && <span className={styles.dailyTag}>DAILY</span>}
+                    {t("history.row.quest", { id: e.id })}
+                    {e.kind === 1 && <span className={styles.dailyTag}>{t("history.row.daily")}</span>}
                   </span>
-                  <span className={styles.rowDate}>{fmtDate(e.claimedAt)}</span>
+                  <span className={styles.rowDate}>{fmtDate(e.claimedAt, lang)}</span>
                 </div>
                 <span
                   className={`${styles.amount} mono`}
-                  title={exact ? "Reward claimed" : "Reward range — daily amounts vary per claim"}
+                  title={exact ? t("history.row.exactTitle") : t("history.row.rangeTitle")}
                 >
                   {exact ? "+" : "~"}
                   {rewardLabel(e.minReward, e.maxReward)}

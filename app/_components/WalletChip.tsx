@@ -2,6 +2,7 @@
 // Compact wallet status chip used in page headers. Shows connect CTA, connecting
 // state, or the short address once connected.
 import { shortAddress } from "@/lib/quest-list";
+import { useT } from "./i18n";
 import styles from "./WalletChip.module.css";
 
 type Props = {
@@ -12,6 +13,7 @@ type Props = {
 };
 
 export function WalletChip({ address, connecting, hasProvider, onConnect }: Props) {
+  const t = useT();
   if (address) {
     return (
       <span className={`${styles.chip} ${styles.connected} mono`} title={address}>
@@ -22,14 +24,14 @@ export function WalletChip({ address, connecting, hasProvider, onConnect }: Prop
   }
   if (!hasProvider) {
     return (
-      <span className={`${styles.chip} ${styles.muted}`} title="Open in MiniPay to connect">
-        No wallet
+      <span className={`${styles.chip} ${styles.muted}`} title={t("settings.wallet.openInMinipay")}>
+        {t("wallet.none")}
       </span>
     );
   }
   return (
     <button className={`${styles.chip} ${styles.action}`} onClick={onConnect} disabled={connecting}>
-      {connecting ? "Connecting…" : "Connect"}
+      {connecting ? t("wallet.connecting") : t("wallet.connect")}
     </button>
   );
 }

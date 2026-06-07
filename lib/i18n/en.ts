@@ -124,7 +124,7 @@ const en = {
   "settings.contract": "Contract",
   "settings.contract.title": "QuestEscrow on Celoscan",
   "settings.about": "About",
-  "settings.about.body": "ShipQuests — complete simple onchain actions, claim cUSD rewards. Rewards are held in escrow on Celo and released the moment you verify.",
+  "settings.about.body": "complete simple onchain actions, claim cUSD rewards. Rewards are held in escrow on Celo and released the moment you verify.",
   "settings.about.builtOn": "Built on",
   "settings.about.version": "v{version}",
 

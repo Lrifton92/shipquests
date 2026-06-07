@@ -5,11 +5,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
+import { useT } from "./i18n";
+import type { Dict } from "@/lib/i18n/en";
 import styles from "./BottomNav.module.css";
 
 type Tab = {
   href: string;
-  label: string;
+  labelKey: keyof Dict;
   /** Active when the pathname starts with this (segment-aware). */
   match: (p: string) => boolean;
   icon: (active: boolean) => ReactNode;
@@ -18,7 +20,7 @@ type Tab = {
 const TABS: Tab[] = [
   {
     href: "/",
-    label: "Quests",
+    labelKey: "nav.quests",
     match: (p) => p === "/" || p.startsWith("/quest"),
     icon: (a) => (
       <svg viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden>
@@ -34,7 +36,7 @@ const TABS: Tab[] = [
   },
   {
     href: "/history",
-    label: "History",
+    labelKey: "nav.history",
     match: (p) => p.startsWith("/history"),
     icon: (a) => (
       <svg viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden>
@@ -52,7 +54,7 @@ const TABS: Tab[] = [
   },
   {
     href: "/sponsor",
-    label: "Create",
+    labelKey: "nav.create",
     match: (p) => p.startsWith("/sponsor"),
     icon: (a) => (
       <svg viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden>
@@ -68,7 +70,7 @@ const TABS: Tab[] = [
   },
   {
     href: "/settings",
-    label: "Settings",
+    labelKey: "nav.settings",
     match: (p) => p.startsWith("/settings"),
     icon: (a) => (
       <svg viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden>
@@ -86,6 +88,7 @@ const TABS: Tab[] = [
 
 export function BottomNav() {
   const pathname = usePathname() || "/";
+  const t = useT();
   return (
     <nav className={styles.nav} aria-label="Primary">
       <ul className={styles.list}>
@@ -102,7 +105,7 @@ export function BottomNav() {
                   {active && <span className={styles.glow} aria-hidden />}
                   {tab.icon(active)}
                 </span>
-                <span className={styles.label}>{tab.label}</span>
+                <span className={styles.label}>{t(tab.labelKey)}</span>
               </Link>
             </li>
           );

@@ -5,6 +5,7 @@
 import Link from "next/link";
 import { rewardLabel, type QuestCard } from "@/lib/quest-list";
 import { useTilt } from "./useTilt";
+import { useT } from "./i18n";
 import styles from "./QuestCardItem.module.css";
 
 function daysLeft(deadline: bigint): number {
@@ -16,6 +17,7 @@ export function QuestCardItem({ quest }: { quest: QuestCard }) {
   const isDaily = quest.kind === "DAILY";
   const days = daysLeft(quest.deadline);
   const tilt = useTilt<HTMLAnchorElement>();
+  const t = useT();
   return (
     <div className={styles.persp}>
     <Link
@@ -30,9 +32,9 @@ export function QuestCardItem({ quest }: { quest: QuestCard }) {
     >
       <div className={styles.top}>
         <span className={`${styles.badge} ${isDaily ? styles.daily : styles.oneshot}`}>
-          {isDaily ? "DAILY BOX" : "ONE-SHOT"}
+          {isDaily ? t("card.daily") : t("card.oneshot")}
         </span>
-        <span className={styles.days}>{days}d left</span>
+        <span className={styles.days}>{t("card.daysLeft", { n: days })}</span>
       </div>
 
       <h3 className={styles.title}>{quest.title}</h3>
@@ -43,7 +45,7 @@ export function QuestCardItem({ quest }: { quest: QuestCard }) {
           <span className={`${styles.amount} mono`}>{rewardLabel(quest.minReward, quest.maxReward)}</span>
           <span className={styles.unit}>cUSD</span>
         </div>
-        <span className={`${styles.left} mono`}>{quest.left.toString()} left</span>
+        <span className={`${styles.left} mono`}>{t("card.left", { n: quest.left.toString() })}</span>
       </div>
     </Link>
     </div>

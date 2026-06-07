@@ -4,23 +4,17 @@
 import { useState, type CSSProperties } from "react";
 import styles from "./settings.module.css";
 import { useMiniPay } from "../_components/useMiniPay";
+import { useT, useLang, LANGS } from "../_components/i18n";
 import { shortAddress } from "@/lib/quest-list";
 import { QUEST_ESCROW_ADDRESS } from "@/lib/quest-abi";
 
 const APP_VERSION = "0.1.0";
 const CELOSCAN = `https://celoscan.io/address/${QUEST_ESCROW_ADDRESS}`;
 
-// UI-only for now. EN is wired; the rest are visual placeholders until i18n lands.
-const LANGS = [
-  { code: "en", label: "English" },
-  { code: "fr", label: "Français" },
-  { code: "es", label: "Español" },
-  { code: "pt", label: "Português" },
-] as const;
-
 export default function Settings() {
+  const t = useT();
+  const { lang, setLang } = useLang();
   const { address, connect, connecting, hasProvider } = useMiniPay();
-  const [lang, setLang] = useState<(typeof LANGS)[number]["code"]>("en");
   const [copied, setCopied] = useState(false);
 
   const copyAddress = async () => {
@@ -37,13 +31,13 @@ export default function Settings() {
   return (
     <main className={styles.shell}>
       <header className={styles.head}>
-        <h1 className={styles.title}>Settings</h1>
-        <p className={styles.sub}>Your wallet, language and app info.</p>
+        <h1 className={styles.title}>{t("settings.title")}</h1>
+        <p className={styles.sub}>{t("settings.sub")}</p>
       </header>
 
       {/* Wallet --------------------------------------------------------- */}
       <section className={`${styles.card} reveal`} style={{ "--i": 1 } as CSSProperties}>
-        <div className={styles.cardLabel}>Wallet</div>
+        <div className={styles.cardLabel}>{t("settings.wallet")}</div>
         {address ? (
           <>
             <div className={styles.walletRow}>
@@ -52,31 +46,29 @@ export default function Settings() {
                 type="button"
                 className={`${styles.walletAddr} mono`}
                 onClick={() => void copyAddress()}
-                title="Tap to copy full address"
+                title={t("settings.wallet.copyTitle")}
               >
                 {shortAddress(address)}
               </button>
               <span className={`${styles.copied} ${copied ? styles.copiedOn : ""}`} aria-live="polite">
-                Copied
+                {t("settings.wallet.copied")}
               </span>
             </div>
-            <p className={styles.note}>
-              Connected via MiniPay. To switch accounts, change the active account in your wallet.
-            </p>
+            <p className={styles.note}>{t("settings.wallet.connectedNote")}</p>
           </>
         ) : (
           <>
             <p className={styles.note}>
               {hasProvider
-                ? "No wallet connected yet."
-                : "Open ShipQuests inside MiniPay to connect your wallet."}
+                ? t("settings.wallet.noneNote")
+                : t("settings.wallet.openInMinipay")}
             </p>
             <button
               className={styles.connectBtn}
               onClick={() => void connect()}
               disabled={!hasProvider || connecting}
             >
-              {connecting ? "Connecting…" : "Connect wallet"}
+              {connecting ? t("wallet.connecting") : t("wallet.connectFull")}
             </button>
           </>
         )}
@@ -84,8 +76,8 @@ export default function Settings() {
 
       {/* Language ------------------------------------------------------- */}
       <section className={`${styles.card} reveal`} style={{ "--i": 2 } as CSSProperties}>
-        <div className={styles.cardLabel}>Language</div>
-        <div className={styles.langGrid} role="radiogroup" aria-label="Language">
+        <div className={styles.cardLabel}>{t("settings.language")}</div>
+        <div className={styles.langGrid} role="radiogroup" aria-label={t("settings.language")}>
           {LANGS.map((l) => (
             <button
               key={l.code}
@@ -99,15 +91,15 @@ export default function Settings() {
             </button>
           ))}
         </div>
-        <p className={styles.note}>More languages coming soon — English is fully supported today.</p>
+        <p className={styles.note}>{t("settings.language.note")}</p>
       </section>
 
       {/* Contract ------------------------------------------------------- */}
       <section className={`${styles.card} reveal`} style={{ "--i": 3 } as CSSProperties}>
-        <div className={styles.cardLabel}>Contract</div>
+        <div className={styles.cardLabel}>{t("settings.contract")}</div>
         <a className={styles.link} href={CELOSCAN} target="_blank" rel="noopener noreferrer">
           <span>
-            <span className={styles.linkTitle}>QuestEscrow on Celoscan</span>
+            <span className={styles.linkTitle}>{t("settings.contract.title")}</span>
             <span className={`${styles.linkAddr} mono`}>{shortAddress(QUEST_ESCROW_ADDRESS)}</span>
           </span>
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden>
@@ -118,16 +110,15 @@ export default function Settings() {
 
       {/* About ---------------------------------------------------------- */}
       <section className={`${styles.card} reveal`} style={{ "--i": 4 } as CSSProperties}>
-        <div className={styles.cardLabel}>About</div>
+        <div className={styles.cardLabel}>{t("settings.about")}</div>
         <p className={styles.about}>
-          <b>ShipQuests</b> — complete simple onchain actions, claim cUSD rewards. Rewards are held
-          in escrow on Celo and released the moment you verify.
+          <b>ShipQuests</b> — {t("settings.about.body")}
         </p>
         <div className={styles.metaRow}>
           <span className={styles.builtOn}>
-            Built on <b>Celo</b>
+            {t("settings.about.builtOn")} <b>Celo</b>
           </span>
-          <span className={`${styles.version} mono`}>v{APP_VERSION}</span>
+          <span className={`${styles.version} mono`}>{t("settings.about.version", { version: APP_VERSION })}</span>
         </div>
       </section>
     </main>

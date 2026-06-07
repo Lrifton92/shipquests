@@ -121,7 +121,7 @@ const es: Dict = {
   "settings.contract": "Contrato",
   "settings.contract.title": "QuestEscrow en Celoscan",
   "settings.about": "Acerca de",
-  "settings.about.body": "ShipQuests — completa acciones onchain simples y reclama recompensas en cUSD. Las recompensas se guardan en escrow en Celo y se liberan en cuanto verificas.",
+  "settings.about.body": "completa acciones onchain simples y reclama recompensas en cUSD. Las recompensas se guardan en escrow en Celo y se liberan en cuanto verificas.",
   "settings.about.builtOn": "Construido sobre",
   "settings.about.version": "v{version}",
 
