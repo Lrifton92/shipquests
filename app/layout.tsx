@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { BottomNav } from "./_components/BottomNav";
+import { Providers } from "./_components/Providers";
 
 const sans = Inter({
   variable: "--font-sans",
@@ -35,8 +36,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${sans.variable} ${mono.variable}`}>
       <body>
-        {children}
-        <BottomNav />
+        <Providers>
+          {children}
+          <BottomNav />
+        </Providers>
       </body>
     </html>
   );
