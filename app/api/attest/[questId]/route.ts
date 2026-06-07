@@ -1,0 +1,60 @@
+import { NextRequest, NextResponse } from "next/server";
+import { isAddress } from "viem";
+import { hasCompletedQuest } from "@/lib/celo-read";
+import { signClaim } from "@/lib/attest";
+import { readQuestOnchain, QUEST_ESCROW_ADDRESS, CELO_CHAIN_ID } from "@/lib/quest-abi";
+
+/**
+ * Pick a reward in [min, max] inclusive, off-chain and non-predictable.
+ * Uses crypto.getRandomValues (not Date.now) so the daily-box amount cannot be
+ * gamed by timing. Security does not depend on this: the contract bounds amount
+ * to [minReward, maxReward] regardless, so the worst case is a payout within range.
+ */
+function pickBoundedReward(min: bigint, max: bigint): bigint {
+  const span = max - min;
+  if (span <= 0n) return min;
+  const range = span + 1n;
+  // Rejection sampling over 64 random bits to avoid modulo bias.
+  const max64 = 1n << 64n;
+  const limit = max64 - (max64 % range);
+  const buf = new BigUint64Array(1);
+  let r: bigint;
+  do {
+    crypto.getRandomValues(buf);
+    r = buf[0];
+  } while (r >= limit);
+  return min + (r % range);
+}
+
+export async function POST(req: NextRequest, ctx: { params: Promise<{ questId: string }> }) {
+  const { questId } = await ctx.params;
+  const { wallet } = await req.json();
+  if (!isAddress(wallet)) {
+    return NextResponse.json({ error: "bad wallet" }, { status: 400 });
+  }
+
+  const q = await readQuestOnchain(BigInt(questId));
+  const done = await hasCompletedQuest(wallet, q.target, q.start);
+  if (!done) {
+    return NextResponse.json({ error: "quest not completed onchain yet" }, { status: 409 });
+  }
+
+  const amount = pickBoundedReward(q.minReward, q.maxReward);
+  const deadline = BigInt(Math.floor(Date.now() / 1000) + 3600);
+
+  const { signature } = await signClaim({
+    questId: BigInt(questId),
+    wallet,
+    amount,
+    deadline,
+    signerPk: process.env.SIGNER_PRIVATE_KEY as `0x${string}`,
+    contract: QUEST_ESCROW_ADDRESS,
+    chainId: CELO_CHAIN_ID,
+  });
+
+  return NextResponse.json({
+    amount: amount.toString(),
+    deadline: deadline.toString(),
+    signature,
+  });
+}
