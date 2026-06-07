@@ -1,0 +1,22 @@
+{
+  "name": "shipquests-contracts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "ShipQuests quest-to-earn contracts (Celo)",
+  "scripts": {
+    "build": "hardhat build",
+    "test": "hardhat test solidity",
+    "deploy:alfajores": "hardhat run script/deploy.ts --network alfajores",
+    "deploy:celo": "hardhat run script/deploy.ts --network celo"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox-viem": "^5.0.0",
+    "@openzeppelin/contracts": "^5.1.0",
+    "@types/node": "^22.19.19",
+    "forge-std": "github:foundry-rs/forge-std#v1.9.4",
+    "hardhat": "^3.0.0",
+    "typescript": "~5.6",
+    "viem": "^2.21.0"
+  }
+}
