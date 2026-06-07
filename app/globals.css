@@ -1,34 +1,57 @@
+/* ShipQuests — Celo black + gold design tokens.
+ * MiniPay perf budget: NO backdrop-filter (kills Opera Mini / low-end Android).
+ * Depth = flat fills + thin borders + light shadows + static gradients.
+ * Motion = transform/opacity only, short, GPU-friendly, reduced-motion aware. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  /* Base — deep warm black, not pure #000 (less harsh on cheap OLED). */
+  --bg: #08080a;
+  --bg-2: #0c0c0e;
+  --surface: #121211;
+  --surface-2: #17170f;
+  --surface-hover: #1c1c14;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+  /* Celo gold accent — warm, controlled, never fluo. */
+  --gold: #fcff52;
+  --gold-deep: #fbcc5c;
+  --gold-soft: rgba(252, 255, 82, 0.14);
+  --gold-line: rgba(252, 255, 82, 0.22);
+  --gold-glow: rgba(251, 204, 92, 0.28);
 
-html {
-  height: 100%;
-}
+  /* Mint — "earned / success" secondary accent. */
+  --mint: #5effb5;
+  --mint-soft: rgba(94, 255, 181, 0.14);
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
+  /* Text. */
+  --text: #ffffff;
+  --text-2: #b6b6ad;
+  --text-3: #76766e;
 
-body {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  /* Borders. */
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+
+  /* Radii — premium soft corners, capped at 16. */
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-pill: 999px;
+
+  /* Spacing scale (4/8). */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-8: 32px;
+  --s-10: 40px;
+
+  /* Light shadows + accent glow (no heavy black drop shadows). */
+  --shadow: 0 1px 0 rgba(255, 255, 255, 0.03), 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-lift: 0 1px 0 rgba(255, 255, 255, 0.05), 0 14px 36px rgba(0, 0, 0, 0.6);
+  --glow-gold: 0 0 0 1px var(--gold-line), 0 10px 30px var(--gold-glow);
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 * {
@@ -37,13 +60,52 @@ body {
   margin: 0;
 }
 
+html {
+  height: 100%;
+  color-scheme: dark;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100%;
+  color: var(--text);
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgba(252, 255, 82, 0.06) 0%, transparent 55%),
+    var(--bg);
+  font-family: var(--font-sans, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+}
+
 a {
   color: inherit;
   text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
+button {
+  font-family: inherit;
+}
+
+/* Tabular numerals everywhere money/figures appear by default; opt-in class. */
+.mono {
+  font-family: var(--font-mono, ui-monospace, "SF Mono", "JetBrains Mono", monospace);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Visible, on-brand focus ring for keyboard nav. */
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
