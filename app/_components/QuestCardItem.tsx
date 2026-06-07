@@ -37,8 +37,11 @@ export function QuestCardItem({ quest }: { quest: QuestCard }) {
         <span className={styles.days}>{t("card.daysLeft", { n: days })}</span>
       </div>
 
-      <h3 className={styles.title}>{quest.title}</h3>
-      <p className={styles.action}>{quest.action}</p>
+      <h3 className={styles.title}>
+        {quest.icon && <span aria-hidden>{quest.icon} </span>}
+        {quest.titleKey ? t(quest.titleKey) : quest.title}
+      </h3>
+      <p className={styles.action}>{quest.actionKey ? t(quest.actionKey) : quest.action}</p>
 
       <div className={styles.foot}>
         <div className={styles.reward}>

@@ -29,6 +29,18 @@ const en = {
   "home.empty.title": "No quests right now",
   "home.empty.sub": "New quests drop regularly. Check back soon.",
 
+  // Quest metadata (keyed by target in lib/quest-meta.ts) -----------------
+  "meta.sendCusd.title": "Send your first cUSD",
+  "meta.sendCusd.action": "Send any amount of cUSD to a friend, then claim your reward.",
+  "meta.ubeswap.title": "Swap on Ubeswap",
+  "meta.ubeswap.action": "Make any swap on Ubeswap, then come back to claim.",
+  "meta.mento.title": "Swap a stablecoin on Mento",
+  "meta.mento.action": "Swap cUSD for cEUR (or any pair) on Mento, then claim.",
+  "meta.gooddollar.title": "Claim your daily G$",
+  "meta.gooddollar.action": "Claim your GoodDollar UBI today, then open your box.",
+  "meta.ceur.title": "Get some cEUR",
+  "meta.ceur.action": "Hold cEUR in your wallet — swap or receive any amount, then claim.",
+
   // Quest card -----------------------------------------------------------
   "card.daily": "DAILY BOX",
   "card.oneshot": "ONE-SHOT",

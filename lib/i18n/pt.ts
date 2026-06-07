@@ -29,6 +29,18 @@ const pt: Dict = {
   "home.empty.title": "Nenhuma missão no momento",
   "home.empty.sub": "Novas missões surgem com frequência. Volte em breve.",
 
+  // Metadados de missão --------------------------------------------------
+  "meta.sendCusd.title": "Envie seus primeiros cUSD",
+  "meta.sendCusd.action": "Envie qualquer quantia de cUSD para um amigo e resgate sua recompensa.",
+  "meta.ubeswap.title": "Faça swap na Ubeswap",
+  "meta.ubeswap.action": "Faça qualquer swap na Ubeswap e volte para resgatar.",
+  "meta.mento.title": "Troque uma stablecoin na Mento",
+  "meta.mento.action": "Troque cUSD por cEUR (ou qualquer par) na Mento e resgate.",
+  "meta.gooddollar.title": "Resgate seus G$ do dia",
+  "meta.gooddollar.action": "Resgate sua renda básica GoodDollar hoje e abra sua caixa.",
+  "meta.ceur.title": "Tenha alguns cEUR",
+  "meta.ceur.action": "Mantenha cEUR na sua carteira — troque ou receba qualquer quantia e resgate.",
+
   // Cartão de missão -----------------------------------------------------
   "card.daily": "CAIXA DIÁRIA",
   "card.oneshot": "ÚNICA",

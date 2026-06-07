@@ -169,21 +169,26 @@ export default function QuestDetail({ params }: { params: Promise<{ id: string }
 
   const isDaily = quest.kind === "DAILY";
   const amountNum = claim ? Number(formatUnits(claim.amount, 18)) : 0;
+  const questTitle = quest.titleKey ? t(quest.titleKey) : quest.title;
+  const questAction = quest.actionKey ? t(quest.actionKey) : quest.action;
 
   return (
     <main className={styles.shell}>
       <BackBar address={address} connecting={connecting} hasProvider={hasProvider} onConnect={() => void connect()} />
 
       {step === "success" ? (
-        <SuccessView isDaily={isDaily} revealed={revealed} amountNum={amountNum} questTitle={quest.title} t={t} />
+        <SuccessView isDaily={isDaily} revealed={revealed} amountNum={amountNum} questTitle={questTitle} t={t} />
       ) : (
         <>
           <header className={styles.questHead}>
             <span className={`${styles.badge} ${isDaily ? styles.daily : styles.oneshot}`}>
               {isDaily ? t("quest.badge.daily") : t("quest.badge.oneshot")}
             </span>
-            <h1 className={styles.title}>{quest.title}</h1>
-            <p className={styles.action}>{quest.action}</p>
+            <h1 className={styles.title}>
+              {quest.icon && <span aria-hidden>{quest.icon} </span>}
+              {questTitle}
+            </h1>
+            <p className={styles.action}>{questAction}</p>
           </header>
 
           <section className={styles.rewardPanel}>

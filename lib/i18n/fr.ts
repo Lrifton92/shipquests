@@ -30,6 +30,17 @@ const fr: Dict = {
   "home.empty.sub": "De nouvelles quêtes arrivent régulièrement. Reviens vite.",
 
   // Carte de quête -------------------------------------------------------
+  "meta.sendCusd.title": "Envoie tes premiers cUSD",
+  "meta.sendCusd.action": "Envoie n’importe quel montant de cUSD à un ami, puis réclame ta récompense.",
+  "meta.ubeswap.title": "Échange sur Ubeswap",
+  "meta.ubeswap.action": "Fais un swap sur Ubeswap, puis reviens réclamer.",
+  "meta.mento.title": "Échange un stablecoin sur Mento",
+  "meta.mento.action": "Échange des cUSD contre des cEUR (ou toute paire) sur Mento, puis réclame.",
+  "meta.gooddollar.title": "Réclame tes G$ du jour",
+  "meta.gooddollar.action": "Réclame ton revenu de base GoodDollar aujourd’hui, puis ouvre ta boîte.",
+  "meta.ceur.title": "Obtiens des cEUR",
+  "meta.ceur.action": "Garde des cEUR dans ton wallet — échange ou reçois un montant, puis réclame.",
+
   "card.daily": "BOÎTE QUOTIDIENNE",
   "card.oneshot": "UNIQUE",
   "card.daysLeft": "{n}j restants",

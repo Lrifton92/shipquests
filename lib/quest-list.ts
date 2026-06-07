@@ -6,15 +6,23 @@
 import { createPublicClient, http, formatUnits } from "viem";
 import { celo } from "viem/chains";
 import { QUEST_ESCROW_ABI, QUEST_ESCROW_ADDRESS } from "./quest-abi";
+import { questMetaFor } from "./quest-meta";
+import en, { type Dict } from "./i18n/en";
 
 export type QuestKind = "ONE-SHOT" | "DAILY";
 
 export type QuestCard = {
   id: string;
-  /** Human title for the action (derived; contract stores only addresses). */
+  /** Human title (EN fallback). Prefer `titleKey` when set for localized copy. */
   title: string;
-  /** One-line description of the action to perform. */
+  /** One-line action (EN fallback). Prefer `actionKey` when set. */
   action: string;
+  /** i18n key for the title, set when the target has known metadata. */
+  titleKey?: keyof Dict;
+  /** i18n key for the action, set when the target has known metadata. */
+  actionKey?: keyof Dict;
+  /** Decorative glyph for known targets. */
+  icon?: string;
   target: `0x${string}`;
   minReward: bigint;
   maxReward: bigint;
@@ -74,6 +82,32 @@ function kindFromUint(k: number): QuestKind {
   return k === 1 ? "DAILY" : "ONE-SHOT";
 }
 
+/**
+ * Resolve display copy for a quest from its target's metadata. Known targets
+ * get a localized title/action (via i18n keys) plus an EN fallback string;
+ * unknown targets keep the generic "Quest #N / interact with the sponsor's app"
+ * copy so the UI degrades gracefully.
+ */
+function copyForTarget(
+  id: string,
+  target: string,
+): Pick<QuestCard, "title" | "action" | "titleKey" | "actionKey" | "icon"> {
+  const meta = questMetaFor(target);
+  if (!meta) {
+    return {
+      title: `Quest #${id}`,
+      action: "Interact with the sponsor's app, then claim.",
+    };
+  }
+  return {
+    title: en[meta.titleKey],
+    action: en[meta.actionKey],
+    titleKey: meta.titleKey,
+    actionKey: meta.actionKey,
+    icon: meta.icon,
+  };
+}
+
 /** Format cUSD wei to a trimmed, fixed-2 (min) display string. */
 export function formatCusd(wei: bigint): string {
   const n = Number(formatUnits(wei, CUSD_DECIMALS));
@@ -125,8 +159,7 @@ async function readAllQuestsOnchain(): Promise<QuestCard[]> {
     if (left > 0n && BigInt(deadline) > now) {
       out.push({
         id: id.toString(),
-        title: `Quest #${id}`,
-        action: "Interact with the sponsor's app, then claim.",
+        ...copyForTarget(id.toString(), target),
         target,
         minReward,
         maxReward,
