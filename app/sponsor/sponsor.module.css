@@ -1,0 +1,296 @@
+.shell {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: var(--s-4) var(--s-4) calc(var(--s-10) + env(safe-area-inset-bottom, 0px));
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+}
+
+/* Back bar --------------------------------------------------------------- */
+.backBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--s-2);
+}
+
+.back {
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 18px;
+  color: var(--text);
+  transition: background 0.16s var(--ease), transform 0.12s var(--ease);
+}
+
+.back:active {
+  transform: scale(0.94);
+}
+
+/* Head ------------------------------------------------------------------- */
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.sub {
+  font-size: 14px;
+  color: var(--text-2);
+}
+
+/* Form ------------------------------------------------------------------- */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(1px, 1fr) minmax(1px, 1fr);
+  gap: var(--s-3);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.fieldLabel {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-2);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-2);
+}
+
+.fieldHint {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--text-3);
+}
+
+.input {
+  width: 100%;
+  height: 48px;
+  padding: 0 var(--s-3);
+  border-radius: var(--r-md);
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 15px;
+  transition: border-color 0.16s var(--ease), background 0.16s var(--ease);
+}
+
+.input::placeholder {
+  color: var(--text-3);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--gold-line);
+  background: var(--surface-2);
+}
+
+/* Toggle groups ---------------------------------------------------------- */
+.toggle {
+  display: flex;
+  gap: var(--s-2);
+  padding: var(--s-1);
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.toggleBtn {
+  flex: 1;
+  height: 40px;
+  border-radius: var(--r-sm);
+  border: none;
+  background: transparent;
+  color: var(--text-2);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.16s var(--ease), color 0.16s var(--ease), transform 0.12s var(--ease);
+}
+
+.toggleBtn:active {
+  transform: scale(0.97);
+}
+
+.toggleOn {
+  background: var(--gold-soft);
+  color: var(--gold);
+  box-shadow: inset 0 0 0 1px var(--gold-line);
+}
+
+/* Escrow total ----------------------------------------------------------- */
+.totalBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  padding: var(--s-4);
+  border-radius: var(--r-md);
+  border: 1px solid var(--gold-line);
+  background:
+    radial-gradient(120% 120% at 0% 0%, rgba(252, 255, 82, 0.08) 0%, transparent 60%),
+    var(--surface-2);
+}
+
+.totalLabel {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-2);
+}
+
+.totalValue {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--gold);
+  letter-spacing: -0.01em;
+}
+
+/* Messages --------------------------------------------------------------- */
+.errorMsg {
+  font-size: 13px;
+  color: #ff9a8a;
+  background: rgba(255, 107, 138, 0.1);
+  border: 1px solid rgba(255, 107, 138, 0.24);
+  border-radius: var(--r-md);
+  padding: var(--s-3);
+}
+
+.hintMsg {
+  font-size: 13px;
+  color: var(--text-3);
+  padding: 0 var(--s-1);
+}
+
+/* CTA -------------------------------------------------------------------- */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  height: 54px;
+  border-radius: var(--r-md);
+  border: none;
+  background: linear-gradient(180deg, var(--gold) 0%, var(--gold-deep) 100%);
+  color: #1a1700;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  box-shadow: var(--glow-gold);
+  transition: transform 0.14s var(--ease), filter 0.14s var(--ease), opacity 0.14s var(--ease);
+}
+
+.cta:active:not(:disabled) {
+  transform: translateY(1px) scale(0.995);
+}
+
+.cta:disabled {
+  opacity: 0.55;
+  cursor: default;
+  box-shadow: none;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid rgba(26, 23, 0, 0.35);
+  border-top-color: #1a1700;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Success ---------------------------------------------------------------- */
+.success {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--s-3);
+  padding: var(--s-8) var(--s-4);
+}
+
+.successIcon {
+  width: 64px;
+  height: 64px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-pill);
+  background: var(--mint-soft);
+  color: var(--mint);
+  font-size: 30px;
+  font-weight: 800;
+  box-shadow: 0 0 0 1px rgba(94, 255, 181, 0.28);
+}
+
+.successTitle {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.successSub {
+  font-size: 14px;
+  color: var(--text-2);
+  max-width: 30ch;
+}
+
+.successCta {
+  margin-top: var(--s-3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  padding: 0 var(--s-6);
+  border-radius: var(--r-pill);
+  background: linear-gradient(180deg, var(--gold) 0%, var(--gold-deep) 100%);
+  color: #1a1700;
+  font-weight: 800;
+  box-shadow: var(--glow-gold);
+}
+
+.successGhost {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-2);
+  padding: var(--s-2) var(--s-3);
+}
