@@ -156,7 +156,10 @@ async function readAllQuestsOnchain(): Promise<QuestCard[]> {
         bigint,
         number,
       ];
-    if (left > 0n && BigInt(deadline) > now) {
+    // Hide the test quest whose target is the escrow itself (self-referential,
+    // created during E2E testing — not a real quest).
+    const isTestQuest = target.toLowerCase() === QUEST_ESCROW_ADDRESS.toLowerCase();
+    if (left > 0n && BigInt(deadline) > now && !isTestQuest) {
       out.push({
         id: id.toString(),
         ...copyForTarget(id.toString(), target),
