@@ -8,11 +8,11 @@ import { celo } from "viem/chains";
 export const CELO_CHAIN_ID = 42220 as const;
 
 /**
- * Deployed escrow address. Placeholder until deploy (Task 6) — read from env so
- * the same build can target the deployed contract without a rebuild.
+ * Deployed escrow on Celo mainnet (2026-06-07, signer 0xd9FD90…643Caa).
+ * Public address, not a secret. Env override kept for staging/other deploys.
  */
 export const QUEST_ESCROW_ADDRESS = (process.env.NEXT_PUBLIC_QUEST_ESCROW_ADDRESS ??
-  "0x0000000000000000000000000000000000000000") as `0x${string}`;
+  "0x2f575fb83A3c71f7E5C482b19a3C33F8146b491f") as `0x${string}`;
 
 export const QUEST_ESCROW_ABI = [
   { inputs: [{ internalType: "address", name: "_signer", type: "address" }], stateMutability: "nonpayable", type: "constructor" },
