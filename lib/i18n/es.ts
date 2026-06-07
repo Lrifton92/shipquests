@@ -169,6 +169,30 @@ const es: Dict = {
   "history.row.daily": "DIARIA",
   "history.row.exactTitle": "Recompensa reclamada",
   "history.row.rangeTitle": "Rango de recompensa — los montos diarios varían por reclamación",
+
+  // Referidos ------------------------------------------------------------
+  "nav.invite": "Invitar",
+  "referral.title": "Invita a tus amigos",
+  "referral.sub": "Comparte tu enlace. Cuando un amigo completa una misión, ganas un bono.",
+  "referral.connect.label": "Obtén tu enlace",
+  "referral.connect.note": "Conecta tu wallet para obtener tu enlace de invitación personal.",
+  "referral.link.label": "Tu enlace de invitación",
+  "referral.link.note": "Los amigos que abran este enlace y completen una misión cuentan para tus bonos.",
+  "referral.copy": "Copiar",
+  "referral.copied": "Copiado",
+  "referral.share": "Compartir",
+  "referral.share.text": "Gana cUSD en Celo con ShipQuests — completa acciones onchain sencillas.",
+  "referral.stats.label": "Tus referidos",
+  "referral.stats.active": "Amigos activos",
+  "referral.stats.eligible": "Bonos listos",
+  "referral.stats.note": "Un amigo cuenta cuando completa su primera misión real.",
+  "referral.claim.cta": "Reclama tu bono",
+  "referral.how.label": "Cómo funciona",
+  "referral.how.s1": "Comparte tu enlace de invitación con un amigo.",
+  "referral.how.s2": "Lo abre y completa cualquier misión.",
+  "referral.how.s3": "Se desbloquea un bono para ti — recláma­lo en la misión de referidos.",
+  "referral.banner": "Un amigo te invitó — completa una misión para que gane un bono.",
+  "referral.banner.dismiss": "Cerrar",
 };
 
 export default es;

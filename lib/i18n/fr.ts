@@ -168,6 +168,30 @@ const fr: Dict = {
   "history.row.daily": "QUOTIDIENNE",
   "history.row.exactTitle": "Récompense réclamée",
   "history.row.rangeTitle": "Fourchette de récompense — les montants quotidiens varient à chaque réclamation",
+
+  // Parrainage -----------------------------------------------------------
+  "nav.invite": "Inviter",
+  "referral.title": "Invite tes amis",
+  "referral.sub": "Partage ton lien. Quand un ami termine une quête, tu gagnes un bonus.",
+  "referral.connect.label": "Obtenir ton lien",
+  "referral.connect.note": "Connecte ton wallet pour obtenir ton lien d’invitation personnel.",
+  "referral.link.label": "Ton lien d’invitation",
+  "referral.link.note": "Les amis qui ouvrent ce lien et terminent une quête comptent pour tes bonus.",
+  "referral.copy": "Copier",
+  "referral.copied": "Copié",
+  "referral.share": "Partager",
+  "referral.share.text": "Gagne du cUSD sur Celo avec ShipQuests — fais des actions onchain simples.",
+  "referral.stats.label": "Tes parrainages",
+  "referral.stats.active": "Amis actifs",
+  "referral.stats.eligible": "Bonus prêts",
+  "referral.stats.note": "Un ami compte dès qu’il termine sa première vraie quête.",
+  "referral.claim.cta": "Réclamer ton bonus",
+  "referral.how.label": "Comment ça marche",
+  "referral.how.s1": "Partage ton lien d’invitation avec un ami.",
+  "referral.how.s2": "Il l’ouvre et termine n’importe quelle quête.",
+  "referral.how.s3": "Un bonus se débloque pour toi — réclame-le sur la quête de parrainage.",
+  "referral.banner": "Un ami t’a invité — termine une quête pour qu’il gagne un bonus.",
+  "referral.banner.dismiss": "Fermer",
 };
 
 export default fr;

@@ -19,6 +19,7 @@ const en = {
   // Bottom nav -----------------------------------------------------------
   "nav.quests": "Quests",
   "nav.history": "History",
+  "nav.invite": "Invite",
   "nav.create": "Create",
   "nav.settings": "Settings",
 
@@ -172,6 +173,29 @@ const en = {
   "history.row.daily": "DAILY",
   "history.row.exactTitle": "Reward claimed",
   "history.row.rangeTitle": "Reward range — daily amounts vary per claim",
+
+  // Referral / invite ----------------------------------------------------
+  "referral.title": "Invite friends",
+  "referral.sub": "Share your link. When a friend completes a quest, you earn a bonus.",
+  "referral.connect.label": "Get your link",
+  "referral.connect.note": "Connect your wallet to get your personal invite link.",
+  "referral.link.label": "Your invite link",
+  "referral.link.note": "Friends who open this link and complete a quest count toward your bonuses.",
+  "referral.copy": "Copy",
+  "referral.copied": "Copied",
+  "referral.share": "Share",
+  "referral.share.text": "Earn cUSD on Celo with ShipQuests — complete simple onchain actions.",
+  "referral.stats.label": "Your referrals",
+  "referral.stats.active": "Active friends",
+  "referral.stats.eligible": "Bonuses ready",
+  "referral.stats.note": "A friend counts once they complete their first real quest.",
+  "referral.claim.cta": "Claim your bonus",
+  "referral.how.label": "How it works",
+  "referral.how.s1": "Share your invite link with a friend.",
+  "referral.how.s2": "They open it and complete any quest.",
+  "referral.how.s3": "A bonus unlocks for you — claim it on the referral quest.",
+  "referral.banner": "A friend invited you — complete a quest so they earn a bonus.",
+  "referral.banner.dismiss": "Dismiss",
 };
 
 export type Dict = typeof en;

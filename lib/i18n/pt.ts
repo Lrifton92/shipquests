@@ -169,6 +169,30 @@ const pt: Dict = {
   "history.row.daily": "DIÁRIA",
   "history.row.exactTitle": "Recompensa resgatada",
   "history.row.rangeTitle": "Faixa de recompensa — os valores diários variam por resgate",
+
+  // Indicações -----------------------------------------------------------
+  "nav.invite": "Convidar",
+  "referral.title": "Convide amigos",
+  "referral.sub": "Compartilhe seu link. Quando um amigo completa uma missão, você ganha um bônus.",
+  "referral.connect.label": "Obtenha seu link",
+  "referral.connect.note": "Conecte sua carteira para obter seu link de convite pessoal.",
+  "referral.link.label": "Seu link de convite",
+  "referral.link.note": "Amigos que abrirem este link e completarem uma missão contam para seus bônus.",
+  "referral.copy": "Copiar",
+  "referral.copied": "Copiado",
+  "referral.share": "Compartilhar",
+  "referral.share.text": "Ganhe cUSD na Celo com o ShipQuests — complete ações onchain simples.",
+  "referral.stats.label": "Suas indicações",
+  "referral.stats.active": "Amigos ativos",
+  "referral.stats.eligible": "Bônus prontos",
+  "referral.stats.note": "Um amigo conta quando completa a primeira missão real.",
+  "referral.claim.cta": "Resgatar seu bônus",
+  "referral.how.label": "Como funciona",
+  "referral.how.s1": "Compartilhe seu link de convite com um amigo.",
+  "referral.how.s2": "Ele abre o link e completa qualquer missão.",
+  "referral.how.s3": "Um bônus é desbloqueado para você — resgate-o na missão de indicação.",
+  "referral.banner": "Um amigo convidou você — complete uma missão para que ele ganhe um bônus.",
+  "referral.banner.dismiss": "Fechar",
 };
 
 export default pt;
