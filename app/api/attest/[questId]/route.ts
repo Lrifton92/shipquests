@@ -3,7 +3,7 @@ import { isAddress } from "viem";
 import { hasCompletedQuest } from "@/lib/celo-read";
 import { signClaim } from "@/lib/attest";
 import { readQuestOnchain, QUEST_ESCROW_ADDRESS, CELO_CHAIN_ID } from "@/lib/quest-abi";
-import { eligibleBonuses, incrRewarded, markRefereeActive } from "@/lib/referral";
+import { accrueEarning, incrPaid, markRefereeActive, owedWei } from "@/lib/referral";
 
 // The referral quest (created onchain by the sponsor; its id goes in this env).
 // When claiming THIS quest we skip the onchain action check and instead require
@@ -43,24 +43,30 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ questId: s
 
   const isReferralQuest = REFERRAL_QUEST_ID !== undefined && questId === REFERRAL_QUEST_ID;
 
+  // amount carried in the signed attestation; bounded onchain to [min, max].
+  let amount: bigint;
   if (isReferralQuest) {
-    // Referral bonus: no onchain action to verify. The sponsor (wallet) may claim
-    // one bonus per distinct active referee, capped by eligibleBonuses().
-    const eligible = await eligibleBonuses(wallet);
-    if (eligible <= 0) {
-      return NextResponse.json({ error: "no active referral yet" }, { status: 409 });
+    // Referral bonus: no onchain action to verify. Pay the sponsor's owed bonus
+    // (pct% of their referees' earnings, minus already-paid), capped per claim
+    // at maxReward. Require owed >= minReward so we never over-pay a dust bonus.
+    const owed = await owedWei(wallet);
+    if (owed < q.minReward) {
+      return NextResponse.json({ error: "no referral bonus yet" }, { status: 409 });
     }
+    amount = owed > q.maxReward ? q.maxReward : owed;
   } else {
     const done = await hasCompletedQuest(wallet, q.target, q.start);
     if (!done) {
       return NextResponse.json({ error: "quest not completed onchain yet" }, { status: 409 });
     }
-    // Real quest completed onchain → advance this wallet's sponsor (if any).
-    // try/catch inside markRefereeActive; never blocks the signature.
+    amount = pickBoundedReward(q.minReward, q.maxReward);
+    // Real quest completed onchain → mark this wallet active for its sponsor and
+    // accrue the sponsor's referral share. Both no-op without a sponsor / KV;
+    // neither blocks the signature.
     await markRefereeActive(wallet);
+    await accrueEarning(wallet, amount);
   }
 
-  const amount = pickBoundedReward(q.minReward, q.maxReward);
   const deadline = BigInt(Math.floor(Date.now() / 1000) + 3600);
 
   const { signature } = await signClaim({
@@ -74,13 +80,13 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ questId: s
   });
 
   if (isReferralQuest) {
-    // Count this bonus as rewarded as soon as we sign it. KNOWN MVP TRADE-OFF:
-    // if the sponsor never broadcasts the claim onchain, this bonus is burned
-    // off-chain (the counter advanced but no tx landed). We accept this for MVP
-    // rather than tracking onchain confirmation; the contract still bounds the
-    // payout, so the worst case is a sponsor losing one *eligible* bonus they
-    // chose not to broadcast — never an over-payment or double-claim.
-    await incrRewarded(wallet);
+    // Count this bonus as paid as soon as we sign it. KNOWN MVP TRADE-OFF: if the
+    // sponsor never broadcasts the claim onchain, this amount is burned off-chain
+    // (paid advanced but no tx landed). We accept this for MVP rather than tracking
+    // onchain confirmation; the contract still bounds the payout, so the worst case
+    // is a sponsor losing a bonus they chose not to broadcast — never an
+    // over-payment or double-claim.
+    await incrPaid(wallet, amount);
   }
 
   return NextResponse.json({

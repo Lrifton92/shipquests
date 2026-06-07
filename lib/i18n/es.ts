@@ -193,6 +193,19 @@ const es: Dict = {
   "referral.how.s3": "Se desbloquea un bono para ti — recláma­lo en la misión de referidos.",
   "referral.banner": "Un amigo te invitó — completa una misión para que gane un bono.",
   "referral.banner.dismiss": "Cerrar",
+  "referral.bonus.label": "Tu bono de referidos",
+  "referral.bonus.rate": "{pct}% de las ganancias de tus amigos",
+  "referral.bonus.referred": "Amigos referidos",
+  "referral.bonus.friendsEarned": "Ganancias de amigos",
+  "referral.bonus.ready": "Listo para reclamar",
+  "referral.bonus.cooldown": "Próximo reclamo en {time}",
+  "referral.bonus.none": "Aún no hay bono — invita amigos para empezar.",
+  "referral.bonus.claim": "Reclamar {amount} cUSD",
+  "referral.bonus.claimGeneric": "Reclamar bono",
+  "referral.bonus.verifying": "Verificando…",
+  "referral.bonus.claiming": "Reclamando…",
+  "referral.bonus.claimed": "¡Bono reclamado!",
+  "referral.bonus.err": "No se pudo reclamar. Inténtalo de nuevo.",
 };
 
 export default es;

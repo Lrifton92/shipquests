@@ -90,8 +90,9 @@ Fallback sans KV : toutes les fonctions restent **no-op / défaut** (comme aujou
 
 1. Provisionner un store **Vercel KV** (Storage → injecte `KV_REST_API_URL/TOKEN`).
 2. Créer la quête referral via `/sponsor` : `target` = adresse de l'escrow (la cache de la
-   grille), `token` = cUSD, `min` = 0.01, `max` = 0.10, `maxCompletions` = au choix (finance
+   grille), `token` = cUSD, `min` = 0.01, `max` = 0.50, `maxCompletions` = au choix (finance
    le pot), `kind` = **Daily**, échéance 30 j. Noter l'`id`.
+   (`min` reste bas pour que le 1er bonus soit réclamable tôt ; `max` 0.50 = plafond par claim/24 h.)
 3. Poser `NEXT_PUBLIC_REFERRAL_QUEST_ID = <id>` et `NEXT_PUBLIC_REFERRAL_PCT = 10` en env Vercel.
 4. Redéployer.
 

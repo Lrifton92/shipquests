@@ -196,6 +196,20 @@ const en = {
   "referral.how.s3": "A bonus unlocks for you — claim it on the referral quest.",
   "referral.banner": "A friend invited you — complete a quest so they earn a bonus.",
   "referral.banner.dismiss": "Dismiss",
+  // Bonus card (percentage model)
+  "referral.bonus.label": "Your referral bonus",
+  "referral.bonus.rate": "{pct}% of your friends' earnings",
+  "referral.bonus.referred": "Friends referred",
+  "referral.bonus.friendsEarned": "Friends earned",
+  "referral.bonus.ready": "Ready to claim",
+  "referral.bonus.cooldown": "Next claim in {time}",
+  "referral.bonus.none": "No bonus yet — invite friends to start earning.",
+  "referral.bonus.claim": "Claim {amount} cUSD",
+  "referral.bonus.claimGeneric": "Claim bonus",
+  "referral.bonus.verifying": "Verifying…",
+  "referral.bonus.claiming": "Claiming…",
+  "referral.bonus.claimed": "Bonus claimed!",
+  "referral.bonus.err": "Could not claim. Please try again.",
 };
 
 export type Dict = typeof en;

@@ -193,6 +193,19 @@ const pt: Dict = {
   "referral.how.s3": "Um bônus é desbloqueado para você — resgate-o na missão de indicação.",
   "referral.banner": "Um amigo convidou você — complete uma missão para que ele ganhe um bônus.",
   "referral.banner.dismiss": "Fechar",
+  "referral.bonus.label": "Seu bônus de indicação",
+  "referral.bonus.rate": "{pct}% dos ganhos dos seus amigos",
+  "referral.bonus.referred": "Amigos indicados",
+  "referral.bonus.friendsEarned": "Ganhos dos amigos",
+  "referral.bonus.ready": "Pronto para resgatar",
+  "referral.bonus.cooldown": "Próximo resgate em {time}",
+  "referral.bonus.none": "Ainda sem bônus — convide amigos para começar.",
+  "referral.bonus.claim": "Resgatar {amount} cUSD",
+  "referral.bonus.claimGeneric": "Resgatar bônus",
+  "referral.bonus.verifying": "Verificando…",
+  "referral.bonus.claiming": "Resgatando…",
+  "referral.bonus.claimed": "Bônus resgatado!",
+  "referral.bonus.err": "Não foi possível resgatar. Tente novamente.",
 };
 
 export default pt;

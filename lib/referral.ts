@@ -1,31 +1,60 @@
 // Off-chain referral attribution on Vercel KV. The QuestEscrow contract is
 // immutable, so referral lives entirely off-chain and rewards reuse the normal
-// quest/claim mechanism (a dedicated "referral quest" the sponsor funds onchain).
+// quest/claim mechanism (a dedicated Daily "referral quest" the sponsor funds).
+//
+// REWARD MODEL: the sponsor earns REFERRAL_PCT% of every cUSD reward their
+// referees earn. Each referee completion accrues pct% of that reward to the
+// sponsor's "earned" tally; the sponsor's claimable bonus = earned*pct - paid.
 //
 // FALLBACK CONTRACT (important): when the KV env vars are absent (local dev, or a
 // preview without a store attached) EVERY function degrades to a no-op and NEVER
-// throws. linkSponsor/markRefereeActive/incrRewarded become silent no-ops and the
-// readers return safe defaults (null / 0). Referral simply does nothing — the
-// claim flow and the rest of the app keep working unchanged. @vercel/kv only
-// touches the network at runtime, so importing this module is safe at build time.
+// throws. Writers become silent no-ops and readers return safe defaults (null /
+// 0 / 0n). Referral simply does nothing — the claim flow and the rest of the app
+// keep working unchanged. @vercel/kv only touches the network at runtime, so
+// importing this module is safe at build time.
+//
+// UNIT NOTE: balances are stored in MICRO-cUSD (1e-6 cUSD = 1e12 wei), not wei.
+// Redis/Upstash INCRBY is a signed 64-bit integer; summing wei (~1e17 each)
+// overflows after ~90 claims. Micro-cUSD keeps millions of claims well within
+// Number.MAX_SAFE_INTEGER. Sub-micro dust (<1e-6 cUSD) is floored away.
 //
 // KEY SHAPE (all addresses lowercased so case never splits a sponsor):
 //   ref:sponsor:<referee>  -> <sponsor>            (string, SET NX once, immutable)
 //   ref:active:<sponsor>   -> { <referee>, ... }   (set of referees who completed a quest)
-//   ref:rewarded:<sponsor> -> <n>                  (int, bonuses already attested)
+//   ref:earned:<sponsor>   -> <micro>              (int, cUSD earned by referees, micro)
+//   ref:paid:<sponsor>     -> <micro>              (int, bonus already attested, micro)
 //
 // ANTI-SYBIL (documented):
 //   - One sponsor per referee, written once (NX) and never overwritten.
 //   - No self-referral (referee !== sponsor is rejected before any write).
-//   - A referee only "counts" once they complete a REAL quest (markRefereeActive
-//     is called from the attest route after onchain completion succeeds). A bare
-//     visit with ?ref never advances the sponsor's counter.
-//   - Set semantics make activation idempotent (the same referee counts once even
-//     if they complete several quests).
-//   - eligibleBonuses is clamped to countActive (a sponsor can never claim more
-//     bonuses than distinct active referees).
+//   - A referee only accrues earnings once they complete a REAL quest
+//     (accrueEarning is called from the attest route after onchain completion).
+//   - owed is clamped to >= 0 (a sponsor can never be owed less-than-zero).
 
 import { createClient, type VercelKV } from "@vercel/kv";
+
+/** Sponsor's share of referee earnings, in percent. Env-tunable, default 10. */
+export const REFERRAL_PCT = Number(process.env.NEXT_PUBLIC_REFERRAL_PCT ?? "10");
+
+const WEI_PER_MICRO = 10n ** 12n; // 1 micro-cUSD = 1e12 wei (cUSD has 18 decimals)
+
+/** Floor cUSD wei to whole micro-cUSD (1e-6 cUSD). Safe JS integer for any realistic total. */
+export function weiToMicro(wei: bigint): number {
+  return Number(wei / WEI_PER_MICRO);
+}
+
+/** Inverse of weiToMicro: whole micro-cUSD back to wei. */
+export function microToWei(micro: number): bigint {
+  return BigInt(Math.trunc(micro)) * WEI_PER_MICRO;
+}
+
+/**
+ * Bonus owed (micro-cUSD) = floor(earned * pct%) - paid, clamped to >= 0.
+ * Pure so it can be unit-tested without KV.
+ */
+export function computeOwedMicro(earnedMicro: number, paidMicro: number, pct: number): number {
+  return Math.max(0, Math.floor((earnedMicro * pct) / 100) - paidMicro);
+}
 
 // Lazily build the client only when both env vars exist. Returns null otherwise
 // so all callers fall through to their no-op/default branch. Memoized.
@@ -41,7 +70,8 @@ function kv(): VercelKV | null {
 const norm = (a: string) => a.toLowerCase();
 const sponsorKey = (referee: string) => `ref:sponsor:${norm(referee)}`;
 const activeKey = (sponsor: string) => `ref:active:${norm(sponsor)}`;
-const rewardedKey = (sponsor: string) => `ref:rewarded:${norm(sponsor)}`;
+const earnedKey = (sponsor: string) => `ref:earned:${norm(sponsor)}`;
+const paidKey = (sponsor: string) => `ref:paid:${norm(sponsor)}`;
 
 /**
  * Pose the sponsor of a referee, only if not already set and referee !== sponsor.
@@ -99,33 +129,66 @@ export async function countActive(sponsor: string): Promise<number> {
   }
 }
 
-/** Number of referral bonuses already attested to this sponsor. */
-export async function getRewarded(sponsor: string): Promise<number> {
+/**
+ * Accrue the sponsor's share of a referee's reward. Call after a referee
+ * completes a REAL quest, with the reward amount signed for them. Adds the FULL
+ * reward (in micro) to the sponsor's earned tally; the pct% is applied at read
+ * time in owedWei(). No-op if the referee has no sponsor / KV absent / errors.
+ */
+export async function accrueEarning(referee: string, amountWei: bigint): Promise<void> {
+  const c = kv();
+  if (!c) return;
+  try {
+    const sponsor = await getSponsor(referee);
+    if (!sponsor) return;
+    const micro = weiToMicro(amountWei);
+    if (micro <= 0) return;
+    await c.incrby(earnedKey(sponsor), micro);
+  } catch {
+    /* no-op */
+  }
+}
+
+/** Total cUSD (micro) earned by a sponsor's referees (0 if KV absent / error). */
+export async function getEarnedMicro(sponsor: string): Promise<number> {
   const c = kv();
   if (!c) return 0;
   try {
-    return (await c.get<number>(rewardedKey(sponsor))) ?? 0;
+    return (await c.get<number>(earnedKey(sponsor))) ?? 0;
   } catch {
     return 0;
   }
 }
 
-/** Increment the rewarded counter (call only when a bonus is actually signed). */
-export async function incrRewarded(sponsor: string): Promise<void> {
+/** Referral bonus already attested to this sponsor, in micro-cUSD. */
+export async function getPaidMicro(sponsor: string): Promise<number> {
+  const c = kv();
+  if (!c) return 0;
+  try {
+    return (await c.get<number>(paidKey(sponsor))) ?? 0;
+  } catch {
+    return 0;
+  }
+}
+
+/** Increment the paid tally by an attested bonus amount (call only when signed). */
+export async function incrPaid(sponsor: string, amountWei: bigint): Promise<void> {
   const c = kv();
   if (!c) return;
   try {
-    await c.incr(rewardedKey(sponsor));
+    const micro = weiToMicro(amountWei);
+    if (micro <= 0) return;
+    await c.incrby(paidKey(sponsor), micro);
   } catch {
     /* no-op */
   }
 }
 
 /**
- * Bonuses the sponsor can still claim = active referees minus already rewarded,
- * clamped to >= 0 (a sponsor can never claim more bonuses than active referees).
+ * Bonus the sponsor can still claim, in cUSD wei.
+ * = floor(earned * REFERRAL_PCT%) - paid, clamped to >= 0.
  */
-export async function eligibleBonuses(sponsor: string): Promise<number> {
-  const [active, rewarded] = await Promise.all([countActive(sponsor), getRewarded(sponsor)]);
-  return Math.max(0, active - rewarded);
+export async function owedWei(sponsor: string): Promise<bigint> {
+  const [earned, paid] = await Promise.all([getEarnedMicro(sponsor), getPaidMicro(sponsor)]);
+  return microToWei(computeOwedMicro(earned, paid, REFERRAL_PCT));
 }

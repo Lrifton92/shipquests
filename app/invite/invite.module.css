@@ -135,14 +135,82 @@
   color: var(--gold);
 }
 
-/* Stats ----------------------------------------------------------------- */
-.stats {
+/* Bonus card ------------------------------------------------------------ */
+.bonusTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2);
+}
+
+.rateChip {
+  flex: 0 0 auto;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--gold-line);
+  background: var(--gold-soft);
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.bonusAmount {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+  margin: var(--s-3) 0 var(--s-1);
+}
+.bonusValue {
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--gold);
+}
+.bonusUnit {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-3);
+}
+
+/* Cooldown bar (24h fill + status) */
+.cooldown {
+  margin-top: var(--s-3);
+}
+.cooldownTrack {
+  height: 8px;
+  width: 100%;
+  border-radius: 999px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.cooldownFill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--gold-deep), var(--gold));
+  transition: width 0.6s var(--ease);
+}
+.cooldownFill.cooldownReady {
+  box-shadow: var(--glow-gold);
+}
+.cooldownText {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+/* Mini stats */
+.miniStats {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--s-3);
+  margin-top: var(--s-4);
 }
-
-.stat {
+.miniStat {
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -151,31 +219,26 @@
   border: 1px solid var(--border);
   background: var(--surface-2);
 }
-
-.statValue {
-  font-size: 26px;
+.miniValue {
+  font-size: 22px;
   font-weight: 800;
   line-height: 1;
   color: var(--text);
 }
-.statValue.eligible {
-  color: var(--gold);
-}
-
-.statLabel {
+.miniLabel {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--text-3);
 }
 
-/* Claim CTA ------------------------------------------------------------- */
-.claimLink {
+/* Claim button ---------------------------------------------------------- */
+.claimBtn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--s-2);
-  margin-top: var(--s-3);
+  margin-top: var(--s-4);
   height: 46px;
   width: 100%;
   border-radius: var(--r-md);
@@ -184,11 +247,38 @@
   color: #1a1700;
   font-size: 15px;
   font-weight: 800;
+  cursor: pointer;
   box-shadow: var(--glow-gold);
-  transition: transform 0.14s var(--ease);
+  transition: transform 0.14s var(--ease), filter 0.14s var(--ease), opacity 0.14s var(--ease);
 }
-.claimLink:active {
+.claimBtn:active:not(:disabled) {
   transform: translateY(1px) scale(0.995);
+}
+.claimBtn:disabled {
+  opacity: 0.55;
+  cursor: default;
+  box-shadow: none;
+  filter: grayscale(0.3);
+}
+
+.spinner {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  border: 2px solid rgba(26, 23, 0, 0.35);
+  border-top-color: #1a1700;
+  animation: invite-spin 0.7s linear infinite;
+}
+@keyframes invite-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.errorMsg {
+  margin-top: var(--s-3);
+  font-size: 12.5px;
+  color: var(--down, #ff6b6b);
 }
 
 /* How it works ---------------------------------------------------------- */

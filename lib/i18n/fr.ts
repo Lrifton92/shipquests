@@ -192,6 +192,19 @@ const fr: Dict = {
   "referral.how.s3": "Un bonus se débloque pour toi — réclame-le sur la quête de parrainage.",
   "referral.banner": "Un ami t’a invité — termine une quête pour qu’il gagne un bonus.",
   "referral.banner.dismiss": "Fermer",
+  "referral.bonus.label": "Ton bonus de parrainage",
+  "referral.bonus.rate": "{pct}% des gains de tes filleuls",
+  "referral.bonus.referred": "Filleuls",
+  "referral.bonus.friendsEarned": "Gains des filleuls",
+  "referral.bonus.ready": "Prêt à réclamer",
+  "referral.bonus.cooldown": "Prochain claim dans {time}",
+  "referral.bonus.none": "Pas encore de bonus — invite des amis pour commencer.",
+  "referral.bonus.claim": "Réclamer {amount} cUSD",
+  "referral.bonus.claimGeneric": "Réclamer le bonus",
+  "referral.bonus.verifying": "Vérification…",
+  "referral.bonus.claiming": "Réclamation…",
+  "referral.bonus.claimed": "Bonus réclamé !",
+  "referral.bonus.err": "Échec du claim. Réessaie.",
 };
 
 export default fr;
