@@ -12,7 +12,7 @@ const pt: Dict = {
   "wallet.help.trigger": "Como conectar",
   "wallet.help.title": "Conectar sua wallet",
   "wallet.help.mobile": "No celular: abra o app MiniPay → menu/Configurações → Site Tester → cole shipquests.vercel.app. O ShipQuests abre com sua wallet já conectada.",
-  "wallet.help.desktop": "No desktop: use a extensão Rabby ou MetaMask e clique em Conectar.",
+  "wallet.help.desktop": "No desktop: use sua extensão de wallet (MetaMask, Rabby, Valora, Coinbase Wallet…) e clique em Conectar.",
   "common.back": "Voltar",
   "common.retry": "Tentar de novo",
 

@@ -12,7 +12,7 @@ const en = {
   "wallet.help.trigger": "How to connect",
   "wallet.help.title": "Connecting your wallet",
   "wallet.help.mobile": "On mobile: open the MiniPay app → menu/Settings → Site Tester → paste shipquests.vercel.app. ShipQuests opens with your wallet already connected.",
-  "wallet.help.desktop": "On desktop: use the Rabby or MetaMask extension and click Connect.",
+  "wallet.help.desktop": "On desktop: use your wallet extension (MetaMask, Rabby, Valora, Coinbase Wallet…) and click Connect.",
   "common.back": "Back",
   "common.retry": "Retry",
 
