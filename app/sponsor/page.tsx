@@ -16,6 +16,7 @@ import {
 } from "viem";
 import styles from "./sponsor.module.css";
 import { useMiniPay } from "../_components/useMiniPay";
+import { ensureCelo } from "../_components/ensureCelo";
 import { WalletChip } from "../_components/WalletChip";
 import { Arrow } from "../_components/Arrow";
 import { useT } from "../_components/i18n";
@@ -145,6 +146,15 @@ export default function Sponsor() {
     }
     if (!client) {
       setErrorText(t("wallet.notAvailable"));
+      return;
+    }
+
+    // Make sure the wallet is on Celo (prompt switch/add) before any write.
+    try {
+      await ensureCelo(client);
+    } catch (e) {
+      setErrorText(t(readableError(e instanceof Error ? e.message : String(e))));
+      setPhase("idle");
       return;
     }
 

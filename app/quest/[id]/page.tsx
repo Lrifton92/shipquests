@@ -5,6 +5,7 @@ import { celo } from "viem/chains";
 import { createPublicClient, http, formatUnits } from "viem";
 import styles from "./quest.module.css";
 import { useMiniPay } from "../../_components/useMiniPay";
+import { ensureCelo } from "../../_components/ensureCelo";
 import { WalletChip } from "../../_components/WalletChip";
 import { Arrow } from "../../_components/Arrow";
 import { CountUp } from "../../_components/CountUp";
@@ -119,6 +120,15 @@ export default function QuestDetail({ params }: { params: Promise<{ id: string }
     if (!client) {
       setErrorText(t("wallet.notAvailable"));
       setStep("error");
+      return;
+    }
+    // Ensure the wallet is on Celo (prompt switch/add) before the claim write.
+    try {
+      await ensureCelo(client);
+    } catch (e) {
+      const { step: s, key } = classifyError(e instanceof Error ? e.message : String(e));
+      setErrorText(t(key));
+      setStep(s);
       return;
     }
     setStep("claiming");

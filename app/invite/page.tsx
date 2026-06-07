@@ -10,6 +10,7 @@ import { celo } from "viem/chains";
 import { createPublicClient, http } from "viem";
 import styles from "./invite.module.css";
 import { useMiniPay } from "../_components/useMiniPay";
+import { ensureCelo } from "../_components/ensureCelo";
 import { useT } from "../_components/i18n";
 import { Arrow } from "../_components/Arrow";
 import { formatCusd } from "@/lib/quest-list";
@@ -162,6 +163,19 @@ export default function Invite() {
 
     if (!client) {
       setErrorText(t("wallet.notAvailable"));
+      setPhase("error");
+      return;
+    }
+    // Ensure the wallet is on Celo (prompt switch/add) before the claim write.
+    try {
+      await ensureCelo(client);
+    } catch (e) {
+      const msg = (e instanceof Error ? e.message : String(e)).toLowerCase();
+      if (msg.includes("user rejected") || msg.includes("denied")) {
+        setPhase("idle");
+        return;
+      }
+      setErrorText(t("referral.bonus.err"));
       setPhase("error");
       return;
     }
