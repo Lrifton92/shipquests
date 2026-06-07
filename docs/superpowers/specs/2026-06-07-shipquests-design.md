@@ -35,22 +35,23 @@ Pourquoi ce concept (analyse data-driven du repo `celo-org/Proof-of-Ship`) :
 | Garde-fou anti-farming | Actions à **vraie substance** (test réel d'app, vrai usage), jamais de wash/réciprocité forcée |
 | Scope contrat | Complet d'emblée (`createQuest` + `claim`) |
 | Scope UI | Séquencé : boucle **claim** d'abord (ce qui scorE), UI sponsor self-serve en fast-follow |
+| Engagement quotidien | **Daily box méritée** : récompense au montant variable, débloquée par une action, financée sponsor, calculée off-chain, cooldown 24h. PAS de loot box gratuite / tombola (gambling exclu) |
 
 ## 4. Point technique central
 
 Un smart contract **ne peut pas** lire une transaction passée sur un autre contrat (l'EVM n'a pas accès à l'historique des txs). La vérification onchain se fait donc en deux temps — **pattern identique à DropRankBadge** (déjà codé par Soufian) :
 
-1. **Off-chain** : le backend lit le RPC / Blockscout Celo et confirme que le user a bien exécuté l'action attendue sur le `targetContract` du sponsor.
-2. **Onchain** : le backend signe une **attestation EIP-712** `(questId, wallet, deadline)` ; le user présente cette signature à `QuestEscrow.claim()` ; le contrat vérifie que le signer est le signer de confiance, puis paie.
+1. **Off-chain** : le backend lit le RPC / Blockscout Celo et confirme que le user a bien exécuté l'action attendue sur le `targetContract` du sponsor. Pour une quête **daily**, le backend **tire le montant** dans `[minReward, maxReward]` (le « mystère » de la daily box) — calcul off-chain non-prédictible, **pas de VRF, pas de hasard onchain manipulable**.
+2. **Onchain** : le backend signe une **attestation EIP-712** `(questId, wallet, amount, deadline)` ; le user présente cette signature à `QuestEscrow.claim()` ; le contrat vérifie le signer de confiance + `amount` dans la fourchette de la quête, puis paie.
 
 ## 5. Architecture (3 unités isolées)
 
 ### 5.1 `QuestEscrow.sol` (Celo mainnet, Solidity 0.8.x, Hardhat)
-Dérivé du pattern DropRankBadge (EIP-712 + signer de confiance).
-- `createQuest(targetContract, rewardToken=cUSD, rewardPerCompletion, maxCompletions)` + transfert du pot (rewardPerCompletion × maxCompletions) du sponsor vers l'escrow → **tx onchain**.
-- `claim(questId, deadline, signature)` : vérifie l'attestation EIP-712 du signer de confiance, interdit le double-claim (mapping `claimed[questId][wallet]`), décrémente les places, transfère `rewardPerCompletion` cUSD au user → **tx onchain**.
+Dérivé du pattern DropRankBadge (EIP-712 + signer de confiance). Une quête est soit **one-shot** (montant fixe, 1 claim/wallet), soit **daily** (montant variable, cooldown 24h) — un seul contrat gère les deux.
+- `createQuest(targetContract, rewardToken=cUSD, minReward, maxReward, maxCompletions, kind)` + transfert du pot (maxReward × maxCompletions, borne haute) du sponsor vers l'escrow → **tx onchain**. Pour one-shot : `minReward == maxReward`.
+- `claim(questId, amount, deadline, signature)` : vérifie l'attestation EIP-712 du signer de confiance, vérifie `minReward ≤ amount ≤ maxReward` (le backend a tiré le montant dans la fourchette), applique la règle d'éligibilité — one-shot : `!claimed[questId][wallet]` ; daily : `block.timestamp ≥ lastClaim[questId][wallet] + 24h` —, transfère `amount` cUSD au user → **tx onchain**.
 - `withdrawUnclaimed(questId)` : le sponsor récupère le reliquat après expiration.
-- Garde-fous : `msg.sender == wallet` signé (anti-replay cross-wallet), `block.timestamp <= deadline` (anti-replay temporel), reentrancy guard sur les transferts.
+- Garde-fous : `wallet` signé == `msg.sender` (anti-replay cross-wallet), `amount` dans la fourchette signée (le user ne choisit pas son gain), `block.timestamp ≤ deadline` (anti-replay temporel), reentrancy guard sur les transferts.
 
 ### 5.2 Backend de vérification (route Next.js, never-fail)
 - Lit le RPC Celo (`forno.celo.org` ou public) + Blockscout Celo pour confirmer la tx du user sur `targetContract` (to = targetContract, from = wallet, succès, postérieure à la création de la quête).
@@ -69,6 +70,16 @@ Dérivé du pattern DropRankBadge (EIP-712 + signer de confiance).
 3. User claim (avec attestation) → **tx sur QuestEscrow** (payout)
 
 → Chaque quête complétée = **2 txs sur l'escrow ShipQuests** + 1 sur l'app du sponsor. L'écosystème transacte via ShipQuests.
+
+## 6bis. Daily box méritée (couche d'engagement)
+
+Mécanique de rétention quotidienne, **sans gambling** (récompense méritée par une action, pas un tirage gratuit) :
+- Le user ouvre sa « daily box » **en complétant l'action du jour** (une quête marquée `daily`).
+- **Montant variable** dans `[minReward, maxReward]` défini par le sponsor → l'effet « mystère » / dopamine.
+- **Tiré off-chain** par le backend (au moment de signer l'attestation), non-prédictible, audité par la fourchette onchain. Aucun VRF, aucune faille de randomness.
+- **Financé par le sponsor** (pot déposé à la création) → zéro coût pour Soufian.
+- **Cooldown 24h** par (quête, wallet).
+- Effet : 1 tx/user/jour (densité + rétention), le frisson du hasard **sur un gain mérité** — la frontière qui passe l'anti-farming (cf. §7).
 
 ## 7. Anti-sybil / conformité (critique)
 
