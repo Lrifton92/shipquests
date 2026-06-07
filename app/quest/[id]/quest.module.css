@@ -516,3 +516,14 @@
     background-position: -200% 0;
   }
 }
+
+/* Desktop / wide — keep the claim/reward column centered and readable.
+   A quest detail is a focused single-action flow, so it stays narrow (~720px)
+   even on large screens rather than stretching edge-to-edge. Mobile unchanged. */
+@media (min-width: 768px) {
+  .shell {
+    max-width: 720px;
+    padding-left: var(--s-6);
+    padding-right: var(--s-6);
+  }
+}

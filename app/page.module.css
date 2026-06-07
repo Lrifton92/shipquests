@@ -170,3 +170,38 @@
     background-position: -200% 0;
   }
 }
+
+/* Desktop / wide — fill the viewport, quests in a multi-column grid.
+   Mobile (everything above) stays byte-identical: these are min-width only. */
+@media (min-width: 768px) {
+  .shell {
+    max-width: 1120px;
+    padding-left: var(--s-8);
+    padding-right: var(--s-8);
+  }
+
+  /* Hero stays full-width at the top of the column. */
+  .hero {
+    padding: var(--s-6) var(--s-8);
+  }
+  .heroValue {
+    font-size: 72px;
+  }
+
+  /* Quest list becomes a grid; each .reveal wrapper is a cell. */
+  .list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s-4);
+  }
+  /* Skeleton cells match real card height in the grid. */
+  .skeleton {
+    height: 156px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

@@ -310,3 +310,28 @@
   font-size: 12px;
   font-weight: 800;
 }
+
+/* Desktop / wide — two-column card grid (Link + Bonus side by side),
+   "How it works" spans full width below. Mobile stays byte-identical. */
+@media (min-width: 768px) {
+  .shell {
+    max-width: 940px;
+    padding-left: var(--s-6);
+    padding-right: var(--s-6);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-content: start;
+    column-gap: var(--s-4);
+    row-gap: var(--s-4);
+  }
+
+  /* Header and the full-width "how it works" card stretch across both columns.
+     The "how" card is the only one carrying a .steps list. */
+  .head,
+  .card:has(.steps),
+  /* Not-connected state renders a single connect card — let it span full width
+     so it never sits alone in one column with an empty gap beside it. */
+  .card:has(.connectBtn) {
+    grid-column: 1 / -1;
+  }
+}

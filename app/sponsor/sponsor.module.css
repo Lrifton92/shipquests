@@ -301,3 +301,13 @@
   color: var(--text-2);
   padding: var(--s-2) var(--s-3);
 }
+
+/* Desktop / wide — widen the column, but keep the form itself at a readable
+   width (an over-stretched form reads poorly). Mobile stays byte-identical. */
+@media (min-width: 768px) {
+  .shell {
+    max-width: 820px;
+    padding-left: var(--s-6);
+    padding-right: var(--s-6);
+  }
+}

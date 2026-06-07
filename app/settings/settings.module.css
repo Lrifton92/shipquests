@@ -226,3 +226,13 @@
   font-size: 12px;
   color: var(--text-3);
 }
+
+/* Desktop / wide — widen the column to a comfortable reading width.
+   Settings is a single stacked column; no grid needed. Mobile unchanged. */
+@media (min-width: 768px) {
+  .shell {
+    max-width: 720px;
+    padding-left: var(--s-6);
+    padding-right: var(--s-6);
+  }
+}
