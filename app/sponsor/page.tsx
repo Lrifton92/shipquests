@@ -78,6 +78,9 @@ function readableError(message: string): string {
   if (m.includes("insufficient funds")) {
     return "Not enough CELO for gas. Top up a little CELO and retry.";
   }
+  if (m.includes("does not match the target chain") || m.includes("chain mismatch")) {
+    return "Switch your wallet to the Celo network, then retry.";
+  }
   return "Something went wrong. Please try again.";
 }
 
@@ -432,7 +435,10 @@ function BackBar({
   return (
     <div className={styles.backBar}>
       <Link href="/" className={styles.back} aria-label="Back to quests">
-        ←
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden>
+          <path d="M14.5 5.5 8 12l6.5 6.5" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        Back
       </Link>
       <WalletChip address={address} connecting={connecting} hasProvider={hasProvider} onConnect={onConnect} />
     </div>

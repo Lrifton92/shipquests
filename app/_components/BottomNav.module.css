@@ -1,0 +1,93 @@
+.nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  /* Top hairline + opaque deep fill (no backdrop blur — MiniPay perf budget). */
+  border-top: 1px solid var(--border);
+  background:
+    radial-gradient(120% 140% at 50% 0%, rgba(252, 255, 82, 0.05) 0%, transparent 60%),
+    var(--bg-2);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.list {
+  list-style: none;
+  margin: 0 auto;
+  max-width: 480px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  /* Tall tap target: 56px row + icon space. */
+  padding: 9px 4px 8px;
+  min-height: 56px;
+  color: var(--text-3);
+  transition: color 0.18s var(--ease);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tab:active {
+  /* Press feedback that survives reduced-motion (color, not transform). */
+  color: var(--text-2);
+}
+
+.active {
+  color: var(--gold);
+}
+
+.iconWrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 28px;
+}
+
+/* The icon itself lifts a hair when active. */
+.active .iconWrap svg {
+  transform: translateY(-1px);
+  transition: transform 0.22s var(--ease);
+}
+.iconWrap svg {
+  transition: transform 0.22s var(--ease);
+}
+
+/* Soft gold halo behind the active icon (radial gradient, no blur). */
+.glow {
+  position: absolute;
+  inset: -6px;
+  border-radius: var(--r-pill);
+  background: radial-gradient(circle, var(--gold-soft) 0%, transparent 70%);
+  animation: tabGlow 0.32s var(--ease);
+}
+
+@keyframes tabGlow {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.label {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tab:not(.active):hover {
+    color: var(--text-2);
+  }
+}

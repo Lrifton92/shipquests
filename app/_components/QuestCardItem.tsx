@@ -1,7 +1,10 @@
 "use client";
 // A single quest card in the list. Links to the detail/claim page.
+// 3D pointer tilt (CSS-transform only) via useTilt — disabled on touch and under
+// prefers-reduced-motion. The Link is the tilting element inside a perspective wrap.
 import Link from "next/link";
 import { rewardLabel, type QuestCard } from "@/lib/quest-list";
+import { useTilt } from "./useTilt";
 import styles from "./QuestCardItem.module.css";
 
 function daysLeft(deadline: bigint): number {
@@ -12,8 +15,19 @@ function daysLeft(deadline: bigint): number {
 export function QuestCardItem({ quest }: { quest: QuestCard }) {
   const isDaily = quest.kind === "DAILY";
   const days = daysLeft(quest.deadline);
+  const tilt = useTilt<HTMLAnchorElement>();
   return (
-    <Link href={`/quest/${quest.id}`} className={styles.card} data-kind={quest.kind}>
+    <div className={styles.persp}>
+    <Link
+      ref={tilt.ref}
+      href={`/quest/${quest.id}`}
+      className={styles.card}
+      data-kind={quest.kind}
+      style={tilt.style}
+      onPointerMove={tilt.onPointerMove}
+      onPointerLeave={tilt.onPointerLeave}
+      onPointerUp={tilt.onPointerUp}
+    >
       <div className={styles.top}>
         <span className={`${styles.badge} ${isDaily ? styles.daily : styles.oneshot}`}>
           {isDaily ? "DAILY BOX" : "ONE-SHOT"}
@@ -32,5 +46,6 @@ export function QuestCardItem({ quest }: { quest: QuestCard }) {
         <span className={`${styles.left} mono`}>{quest.left.toString()} left</span>
       </div>
     </Link>
+    </div>
   );
 }

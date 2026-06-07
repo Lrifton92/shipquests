@@ -1,3 +1,8 @@
+/* Perspective container for the 3D tilt (perspective must live on the ancestor). */
+.persp {
+  perspective: 900px;
+}
+
 .card {
   position: relative;
   display: block;
@@ -6,9 +11,13 @@
   background: var(--surface);
   padding: var(--s-4);
   box-shadow: var(--shadow);
-  transition: transform 0.18s var(--ease), border-color 0.18s var(--ease), box-shadow 0.18s var(--ease);
+  transform-style: preserve-3d;
+  /* Pointer-driven tilt vars (set by useTilt); 0deg at rest. */
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform 0.16s var(--ease), border-color 0.18s var(--ease), box-shadow 0.18s var(--ease);
   /* Left accent rail — gold for daily, subtle for one-shot. */
   overflow: hidden;
+  will-change: transform;
 }
 
 .card::before {
@@ -28,14 +37,22 @@
 
 @media (hover: hover) and (pointer: fine) {
   .card:hover {
-    transform: translateY(-2px);
+    /* Lift in Z (real depth) while honoring the pointer tilt vars. */
+    transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(14px);
     border-color: var(--gold-line);
     box-shadow: var(--shadow-lift);
   }
 }
 
 .card:active {
-  transform: translateY(0);
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(4px) scale(0.995);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .card:hover {
+    transform: none;
+  }
 }
 
 .top {

@@ -18,21 +18,27 @@
 }
 
 .back {
-  width: 38px;
   height: 38px;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  gap: 6px;
+  padding: 0 14px 0 11px;
   border-radius: var(--r-pill);
   border: 1px solid var(--border);
   background: var(--surface);
-  font-size: 18px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
   color: var(--text);
-  transition: background 0.16s var(--ease), transform 0.12s var(--ease);
+  transition: background 0.16s var(--ease), border-color 0.16s var(--ease), transform 0.12s var(--ease);
 }
 
+.back:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-strong);
+}
 .back:active {
-  transform: scale(0.94);
+  transform: scale(0.97);
 }
 
 /* Head ------------------------------------------------------------------- */

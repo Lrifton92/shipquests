@@ -52,6 +52,9 @@
   --glow-gold: 0 0 0 1px var(--gold-line), 0 10px 30px var(--gold-glow);
 
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Fixed bottom nav height (icon row + label + vertical padding). */
+  --nav-h: 64px;
 }
 
 * {
@@ -108,15 +111,30 @@ body::after {
   50% { opacity: 1; transform: translate3d(0, -2%, 0) scale(1.08); }
 }
 
+/* Every primary screen is a <main>; reserve room for the fixed bottom nav. */
+main {
+  padding-bottom: calc(var(--nav-h) + var(--s-6) + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+/* Per-route page transition. Driven by app/template.tsx remounting on nav. */
+@keyframes pageEnter {
+  from { opacity: 0; transform: translate3d(0, 18px, 0) scale(0.985); }
+  to { opacity: 1; transform: none; }
+}
+.page-enter {
+  animation: pageEnter 0.42s var(--ease) both;
+  transform-origin: 50% 30%;
+}
+
 /* Entry cascade — set --i on each item for stagger. */
 @keyframes fadeUp {
-  from { opacity: 0; transform: translate3d(0, 14px, 0); }
+  from { opacity: 0; transform: translate3d(0, 18px, 0); }
   to { opacity: 1; transform: none; }
 }
 .reveal {
   opacity: 0;
-  animation: fadeUp 0.5s var(--ease) forwards;
-  animation-delay: calc(var(--i, 0) * 70ms);
+  animation: fadeUp 0.55s var(--ease) forwards;
+  animation-delay: calc(var(--i, 0) * 80ms);
 }
 
 /* Soft pulsing dot / live accents. */

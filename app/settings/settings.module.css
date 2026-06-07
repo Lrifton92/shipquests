@@ -1,0 +1,228 @@
+.shell {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: var(--s-6) var(--s-4);
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  margin-bottom: var(--s-1);
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.sub {
+  font-size: 14px;
+  color: var(--text-2);
+}
+
+/* Card ------------------------------------------------------------------- */
+.card {
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  padding: var(--s-4);
+  box-shadow: var(--shadow);
+}
+
+.cardLabel {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--text-3);
+  margin-bottom: var(--s-3);
+}
+
+.note {
+  margin-top: var(--s-3);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+
+/* Wallet ----------------------------------------------------------------- */
+.walletRow {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.walletDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--mint);
+  box-shadow: 0 0 10px var(--mint);
+  flex: 0 0 auto;
+}
+
+.walletAddr {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+}
+
+.copied {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--mint);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 0.2s var(--ease), transform 0.2s var(--ease);
+}
+.copiedOn {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.connectBtn {
+  margin-top: var(--s-3);
+  height: 46px;
+  width: 100%;
+  border-radius: var(--r-md);
+  border: 1px solid var(--gold-line);
+  background: linear-gradient(180deg, var(--gold) 0%, var(--gold-deep) 100%);
+  color: #1a1700;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: var(--glow-gold);
+  transition: transform 0.14s var(--ease), filter 0.14s var(--ease), opacity 0.14s var(--ease);
+}
+.connectBtn:active:not(:disabled) {
+  transform: translateY(1px) scale(0.995);
+}
+.connectBtn:disabled {
+  opacity: 0.55;
+  cursor: default;
+  box-shadow: none;
+  filter: grayscale(0.3);
+}
+
+/* Language --------------------------------------------------------------- */
+.langGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-2);
+}
+
+.langBtn {
+  height: 44px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text-2);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.16s var(--ease), color 0.16s var(--ease), background 0.16s var(--ease), transform 0.12s var(--ease);
+}
+.langBtn:active {
+  transform: scale(0.97);
+}
+.langOn {
+  border-color: var(--gold-line);
+  background: var(--gold-soft);
+  color: var(--gold);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .langBtn:not(.langOn):hover {
+    border-color: var(--border-strong);
+    color: var(--text);
+  }
+}
+
+/* Contract link ---------------------------------------------------------- */
+.link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  padding: var(--s-3);
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  transition: border-color 0.16s var(--ease), background 0.16s var(--ease), transform 0.12s var(--ease);
+}
+.link:active {
+  transform: scale(0.99);
+}
+@media (hover: hover) and (pointer: fine) {
+  .link:hover {
+    border-color: var(--gold-line);
+    background: var(--surface-hover);
+  }
+  .link:hover svg {
+    color: var(--gold);
+  }
+}
+
+.linkTitle {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.linkAddr {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+.link svg {
+  flex: 0 0 auto;
+  color: var(--text-3);
+  transition: color 0.16s var(--ease);
+}
+
+/* About ------------------------------------------------------------------ */
+.about {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+.about b {
+  color: var(--text);
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--s-4);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--border);
+}
+
+.builtOn {
+  font-size: 13px;
+  color: var(--text-2);
+}
+.builtOn b {
+  color: var(--gold);
+}
+
+.version {
+  font-size: 12px;
+  color: var(--text-3);
+}
