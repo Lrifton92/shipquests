@@ -9,6 +9,10 @@ const fr: Dict = {
   "wallet.connectFull": "Connecter le wallet",
   "wallet.connectFirst": "Connecte d’abord ton wallet.",
   "wallet.notAvailable": "Wallet indisponible.",
+  "wallet.help.trigger": "Comment connecter",
+  "wallet.help.title": "Connecter ton wallet",
+  "wallet.help.mobile": "Sur mobile : ouvre l’app MiniPay → menu/Réglages → Site Tester → colle shipquests.vercel.app. ShipQuests s’ouvre avec ton wallet déjà connecté.",
+  "wallet.help.desktop": "Sur desktop : utilise l’extension Rabby ou MetaMask et clique sur Connecter.",
   "common.back": "Retour",
   "common.retry": "Réessayer",
 
