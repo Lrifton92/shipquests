@@ -17,6 +17,8 @@ import {
 import styles from "./sponsor.module.css";
 import { useMiniPay } from "../_components/useMiniPay";
 import { WalletChip } from "../_components/WalletChip";
+import { useT } from "../_components/i18n";
+import type { Dict } from "@/lib/i18n/en";
 import { QUEST_ESCROW_ABI, QUEST_ESCROW_ADDRESS } from "@/lib/quest-abi";
 
 // cUSD on Celo mainnet, 18 decimals. Pre-filled but editable below.
@@ -70,21 +72,22 @@ const DURATIONS = [7, 14, 30] as const;
 
 type Phase = "idle" | "checking" | "approving" | "creating" | "success" | "error";
 
-function readableError(message: string): string {
+function readableError(message: string): keyof Dict {
   const m = message.toLowerCase();
   if (m.includes("user rejected") || m.includes("denied") || m.includes("rejected the request")) {
-    return "Transaction cancelled in your wallet.";
+    return "sponsor.err.cancelled";
   }
   if (m.includes("insufficient funds")) {
-    return "Not enough CELO for gas. Top up a little CELO and retry.";
+    return "sponsor.err.gas";
   }
   if (m.includes("does not match the target chain") || m.includes("chain mismatch")) {
-    return "Switch your wallet to the Celo network, then retry.";
+    return "sponsor.err.chain";
   }
-  return "Something went wrong. Please try again.";
+  return "sponsor.err.generic";
 }
 
 export default function Sponsor() {
+  const t = useT();
   const { address, client, connect, connecting, hasProvider } = useMiniPay();
 
   // Form state.
@@ -101,17 +104,17 @@ export default function Sponsor() {
   const [errorText, setErrorText] = useState("");
   const [createdId, setCreatedId] = useState<string | null>(null);
 
-  // Client-side validation (cheap, runs every render).
-  const validation = useMemo(() => {
-    if (!isAddress(target)) return "Enter a valid action target address.";
-    if (!isAddress(token)) return "Enter a valid reward token address.";
+  // Client-side validation (cheap, runs every render). Returns an i18n key.
+  const validation = useMemo<keyof Dict | null>(() => {
+    if (!isAddress(target)) return "sponsor.val.target";
+    if (!isAddress(token)) return "sponsor.val.token";
     const min = Number(minReward);
     const max = Number(maxReward);
     const comps = Number(maxCompletions);
-    if (!(min > 0)) return "Min reward must be greater than 0.";
-    if (!(max > 0)) return "Max reward must be greater than 0.";
-    if (min > max) return "Min reward can't be greater than max reward.";
-    if (!Number.isInteger(comps) || comps <= 0) return "Max completions must be a whole number above 0.";
+    if (!(min > 0)) return "sponsor.val.minGt0";
+    if (!(max > 0)) return "sponsor.val.maxGt0";
+    if (min > max) return "sponsor.val.minLeMax";
+    if (!Number.isInteger(comps) || comps <= 0) return "sponsor.val.completions";
     return null;
   }, [target, token, minReward, maxReward, maxCompletions]);
 
@@ -130,17 +133,17 @@ export default function Sponsor() {
   const submit = useCallback(async () => {
     setErrorText("");
     if (validation) {
-      setErrorText(validation);
+      setErrorText(t(validation));
       return;
     }
 
     const wallet = address ?? (await connect());
     if (!wallet) {
-      setErrorText("Connect your wallet first.");
+      setErrorText(t("wallet.connectFirst"));
       return;
     }
     if (!client) {
-      setErrorText("Wallet not available.");
+      setErrorText(t("wallet.notAvailable"));
       return;
     }
 
@@ -163,14 +166,16 @@ export default function Sponsor() {
       });
       if (balance < escrowTotal) {
         setErrorText(
-          `Insufficient balance. This quest locks ${formatUnits(escrowTotal, 18)} cUSD, ` +
-            `your wallet has ${formatUnits(balance, 18)} cUSD.`,
+          t("sponsor.err.insufficientBalance", {
+            locked: formatUnits(escrowTotal, 18),
+            have: formatUnits(balance, 18),
+          }),
         );
         setPhase("idle");
         return;
       }
     } catch {
-      setErrorText("Couldn't read your token balance. Check the token address and network.");
+      setErrorText(t("sponsor.err.readBalance"));
       setPhase("error");
       return;
     }
@@ -188,7 +193,7 @@ export default function Sponsor() {
       });
       await publicClient.waitForTransactionReceipt({ hash: approveHash });
     } catch (e) {
-      setErrorText(readableError(e instanceof Error ? e.message : String(e)));
+      setErrorText(t(readableError(e instanceof Error ? e.message : String(e))));
       setPhase("error");
       return;
     }
@@ -206,7 +211,7 @@ export default function Sponsor() {
       });
       await publicClient.waitForTransactionReceipt({ hash: createHash });
     } catch (e) {
-      setErrorText(readableError(e instanceof Error ? e.message : String(e)));
+      setErrorText(t(readableError(e instanceof Error ? e.message : String(e))));
       setPhase("error");
       return;
     }
@@ -235,6 +240,7 @@ export default function Sponsor() {
     maxCompletions,
     kind,
     durationDays,
+    t,
   ]);
 
   if (phase === "success") {
@@ -245,17 +251,15 @@ export default function Sponsor() {
           <div className={styles.successIcon} aria-hidden>
             ✓
           </div>
-          <div className={styles.successTitle}>Quest is live</div>
-          <p className={styles.successSub}>
-            Your rewards are locked in escrow on Celo. Players can complete it now.
-          </p>
+          <div className={styles.successTitle}>{t("sponsor.success.title")}</div>
+          <p className={styles.successSub}>{t("sponsor.success.sub")}</p>
           {createdId !== null && (
             <Link href={`/quest/${createdId}`} className={styles.successCta}>
-              View quest #{createdId} →
+              {t("sponsor.success.view", { id: createdId })}
             </Link>
           )}
           <Link href="/sponsor" className={styles.successGhost} onClick={() => location.reload()}>
-            Create another
+            {t("sponsor.success.another")}
           </Link>
         </div>
       </main>
@@ -267,14 +271,12 @@ export default function Sponsor() {
       <BackBar address={address} connecting={connecting} hasProvider={hasProvider} onConnect={() => void connect()} />
 
       <header className={styles.head}>
-        <h1 className={styles.title}>Create a quest</h1>
-        <p className={styles.sub}>
-          Set the action, fund the rewards, ship it. Two quick wallet confirmations.
-        </p>
+        <h1 className={styles.title}>{t("sponsor.title")}</h1>
+        <p className={styles.sub}>{t("sponsor.sub")}</p>
       </header>
 
       <div className={styles.form}>
-        <Field label="Action target" hint="Contract players must interact with to qualify.">
+        <Field label={t("sponsor.field.target")} hint={t("sponsor.field.target.hint")}>
           <input
             className={`${styles.input} mono`}
             value={target}
@@ -287,7 +289,7 @@ export default function Sponsor() {
           />
         </Field>
 
-        <Field label="Reward token" hint="Defaults to cUSD. Must be an 18-decimal ERC-20.">
+        <Field label={t("sponsor.field.token")} hint={t("sponsor.field.token.hint")}>
           <input
             className={`${styles.input} mono`}
             value={token}
@@ -300,7 +302,7 @@ export default function Sponsor() {
         </Field>
 
         <div className={styles.row}>
-          <Field label="Min reward" hint="cUSD">
+          <Field label={t("sponsor.field.minReward")} hint={t("sponsor.field.cusd")}>
             <input
               className={`${styles.input} mono`}
               value={minReward}
@@ -309,7 +311,7 @@ export default function Sponsor() {
               placeholder="0.10"
             />
           </Field>
-          <Field label="Max reward" hint="cUSD">
+          <Field label={t("sponsor.field.maxReward")} hint={t("sponsor.field.cusd")}>
             <input
               className={`${styles.input} mono`}
               value={maxReward}
@@ -320,7 +322,7 @@ export default function Sponsor() {
           </Field>
         </div>
 
-        <Field label="Max completions" hint="How many players can earn.">
+        <Field label={t("sponsor.field.maxCompletions")} hint={t("sponsor.field.maxCompletions.hint")}>
           <input
             className={`${styles.input} mono`}
             value={maxCompletions}
@@ -330,8 +332,8 @@ export default function Sponsor() {
           />
         </Field>
 
-        <Field label="Type" hint="One-shot pays once. Daily can be opened every 24h.">
-          <div className={styles.toggle} role="radiogroup" aria-label="Quest type">
+        <Field label={t("sponsor.field.type")} hint={t("sponsor.field.type.hint")}>
+          <div className={styles.toggle} role="radiogroup" aria-label={t("sponsor.field.type")}>
             <button
               type="button"
               role="radio"
@@ -339,7 +341,7 @@ export default function Sponsor() {
               className={`${styles.toggleBtn} ${kind === 0 ? styles.toggleOn : ""}`}
               onClick={() => setKind(0)}
             >
-              One-shot
+              {t("sponsor.type.oneshot")}
             </button>
             <button
               type="button"
@@ -348,13 +350,13 @@ export default function Sponsor() {
               className={`${styles.toggleBtn} ${kind === 1 ? styles.toggleOn : ""}`}
               onClick={() => setKind(1)}
             >
-              Daily box
+              {t("sponsor.type.daily")}
             </button>
           </div>
         </Field>
 
-        <Field label="Deadline" hint="When the quest stops accepting completions.">
-          <div className={styles.toggle} role="radiogroup" aria-label="Deadline">
+        <Field label={t("sponsor.field.deadline")} hint={t("sponsor.field.deadline.hint")}>
+          <div className={styles.toggle} role="radiogroup" aria-label={t("sponsor.field.deadline")}>
             {DURATIONS.map((d) => (
               <button
                 key={d}
@@ -364,20 +366,20 @@ export default function Sponsor() {
                 className={`${styles.toggleBtn} ${durationDays === d ? styles.toggleOn : ""}`}
                 onClick={() => setDurationDays(d)}
               >
-                {d} days
+                {t("sponsor.duration.days", { n: d })}
               </button>
             ))}
           </div>
         </Field>
 
         <div className={styles.totalBox}>
-          <span className={styles.totalLabel}>Total locked in escrow</span>
+          <span className={styles.totalLabel}>{t("sponsor.total.label")}</span>
           <span className={`${styles.totalValue} mono`}>{formatUnits(total, 18)} cUSD</span>
         </div>
 
         {errorText && <div className={styles.errorMsg}>{errorText}</div>}
         {!errorText && validation && phase === "idle" && (
-          <div className={styles.hintMsg}>{validation}</div>
+          <div className={styles.hintMsg}>{t(validation)}</div>
         )}
 
         <button
@@ -387,14 +389,14 @@ export default function Sponsor() {
         >
           {busy && <span className={styles.spinner} aria-hidden />}
           {phase === "checking"
-            ? "Checking balance…"
+            ? t("sponsor.cta.checking")
             : phase === "approving"
-              ? "Approving cUSD…"
+              ? t("sponsor.cta.approving")
               : phase === "creating"
-                ? "Creating quest…"
+                ? t("sponsor.cta.creating")
                 : address
-                  ? "Fund & create quest"
-                  : "Connect wallet to create"}
+                  ? t("sponsor.cta.create")
+                  : t("sponsor.cta.connect")}
         </button>
       </div>
     </main>
@@ -432,13 +434,14 @@ function BackBar({
   hasProvider: boolean;
   onConnect: () => void;
 }) {
+  const t = useT();
   return (
     <div className={styles.backBar}>
-      <Link href="/" className={styles.back} aria-label="Back to quests">
+      <Link href="/" className={styles.back} aria-label={t("common.back")}>
         <svg viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden>
           <path d="M14.5 5.5 8 12l6.5 6.5" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
-        Back
+        {t("common.back")}
       </Link>
       <WalletChip address={address} connecting={connecting} hasProvider={hasProvider} onConnect={onConnect} />
     </div>

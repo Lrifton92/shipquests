@@ -7,6 +7,8 @@ import styles from "./quest.module.css";
 import { useMiniPay } from "../../_components/useMiniPay";
 import { WalletChip } from "../../_components/WalletChip";
 import { CountUp } from "../../_components/CountUp";
+import { useT } from "../../_components/i18n";
+import type { Dict } from "@/lib/i18n/en";
 import {
   getQuest,
   rewardLabel,
@@ -32,22 +34,23 @@ const publicClient = createPublicClient({
   transport: http(process.env.NEXT_PUBLIC_CELO_RPC_URL || "https://forno.celo.org"),
 });
 
-function classifyError(message: string): { step: Step; text: string } {
+function classifyError(message: string): { step: Step; key: keyof Dict } {
   const m = message.toLowerCase();
   if (m.includes("cooldown")) {
-    return { step: "error", text: "You already opened today's box. Come back in 24h." };
+    return { step: "error", key: "quest.err.cooldown" };
   }
   if (m.includes("already claimed")) {
-    return { step: "error", text: "You've already claimed this quest." };
+    return { step: "error", key: "quest.err.alreadyClaimed" };
   }
   if (m.includes("user rejected") || m.includes("denied")) {
-    return { step: "idle", text: "Transaction cancelled." };
+    return { step: "idle", key: "quest.err.cancelled" };
   }
-  return { step: "error", text: "Something went wrong. Please try again." };
+  return { step: "error", key: "quest.err.generic" };
 }
 
 export default function QuestDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const t = useT();
   const { address, client, connect, connecting, hasProvider } = useMiniPay();
 
   const [quest, setQuest] = useState<QuestCard | null>(null);
@@ -76,7 +79,7 @@ export default function QuestDetail({ params }: { params: Promise<{ id: string }
 
     const wallet = address ?? (await connect());
     if (!wallet) {
-      setErrorText("Connect your wallet first.");
+      setErrorText(t("wallet.connectFirst"));
       return;
     }
 
@@ -94,7 +97,7 @@ export default function QuestDetail({ params }: { params: Promise<{ id: string }
         return;
       }
       if (!res.ok) {
-        setErrorText("Verification failed. Try again in a moment.");
+        setErrorText(t("quest.err.verifyFailed"));
         setStep("error");
         return;
       }
@@ -106,14 +109,14 @@ export default function QuestDetail({ params }: { params: Promise<{ id: string }
       };
       setClaim(data);
     } catch {
-      setErrorText("Couldn't reach the server. Check your connection.");
+      setErrorText(t("quest.err.serverUnreachable"));
       setStep("error");
       return;
     }
 
     // 2) Claim onchain via MiniPay wallet client.
     if (!client) {
-      setErrorText("Wallet not available.");
+      setErrorText(t("wallet.notAvailable"));
       setStep("error");
       return;
     }
@@ -132,11 +135,11 @@ export default function QuestDetail({ params }: { params: Promise<{ id: string }
       // Trigger the box-open / count-up on the next frame.
       requestAnimationFrame(() => setRevealed(true));
     } catch (e) {
-      const { step: s, text } = classifyError(e instanceof Error ? e.message : String(e));
-      setErrorText(text);
+      const { step: s, key } = classifyError(e instanceof Error ? e.message : String(e));
+      setErrorText(t(key));
       setStep(s);
     }
-  }, [quest, address, client, connect]);
+  }, [quest, address, client, connect, t]);
 
   if (step === "loading") {
     return (
@@ -155,9 +158,9 @@ export default function QuestDetail({ params }: { params: Promise<{ id: string }
           <div className={styles.nfIcon} aria-hidden>
             ◇
           </div>
-          <div className={styles.nfTitle}>Quest not found</div>
+          <div className={styles.nfTitle}>{t("quest.notFound.title")}</div>
           <Link href="/" className={styles.backLink}>
-            ← Back to quests
+            {t("quest.notFound.back")}
           </Link>
         </div>
       </main>
@@ -172,12 +175,12 @@ export default function QuestDetail({ params }: { params: Promise<{ id: string }
       <BackBar address={address} connecting={connecting} hasProvider={hasProvider} onConnect={() => void connect()} />
 
       {step === "success" ? (
-        <SuccessView isDaily={isDaily} revealed={revealed} amountNum={amountNum} questTitle={quest.title} />
+        <SuccessView isDaily={isDaily} revealed={revealed} amountNum={amountNum} questTitle={quest.title} t={t} />
       ) : (
         <>
           <header className={styles.questHead}>
             <span className={`${styles.badge} ${isDaily ? styles.daily : styles.oneshot}`}>
-              {isDaily ? "DAILY BOX" : "ONE-SHOT"}
+              {isDaily ? t("quest.badge.daily") : t("quest.badge.oneshot")}
             </span>
             <h1 className={styles.title}>{quest.title}</h1>
             <p className={styles.action}>{quest.action}</p>
@@ -185,7 +188,7 @@ export default function QuestDetail({ params }: { params: Promise<{ id: string }
 
           <section className={styles.rewardPanel}>
             <span className={styles.rewardLabel}>
-              {isDaily ? "Mystery reward" : "Reward"}
+              {isDaily ? t("quest.reward.mystery") : t("quest.reward.label")}
             </span>
             <div className={styles.rewardValue}>
               <span className={`${styles.rewardAmount} mono`}>
@@ -194,17 +197,17 @@ export default function QuestDetail({ params }: { params: Promise<{ id: string }
               <span className={styles.rewardUnit}>cUSD</span>
             </div>
             {isDaily && (
-              <p className={styles.rewardHint}>The exact amount is revealed when you open the box.</p>
+              <p className={styles.rewardHint}>{t("quest.reward.hint")}</p>
             )}
           </section>
 
           <dl className={styles.meta}>
             <div>
-              <dt>Spots left</dt>
+              <dt>{t("quest.meta.spotsLeft")}</dt>
               <dd className="mono">{quest.left.toString()}</dd>
             </div>
             <div>
-              <dt>Action target</dt>
+              <dt>{t("quest.meta.actionTarget")}</dt>
               <dd className="mono" title={quest.target}>
                 {shortAddress(quest.target)}
               </dd>
@@ -213,21 +216,21 @@ export default function QuestDetail({ params }: { params: Promise<{ id: string }
 
           {isMock && (
             <div className={styles.notice}>
-              <span aria-hidden>●</span> Preview quest — claiming needs the live contract.
+              <span aria-hidden>●</span> {t("quest.preview")}
             </div>
           )}
 
           {step === "needsAction" && (
             <div className={styles.needs}>
-              <div className={styles.needsTitle}>Complete the action first</div>
-              <p>We couldn&apos;t find your onchain action yet. Do it, then verify again.</p>
+              <div className={styles.needsTitle}>{t("quest.needs.title")}</div>
+              <p>{t("quest.needs.sub")}</p>
               <a
                 className={styles.needsLink}
                 href={`https://celoscan.io/address/${quest.target}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Open the target app ↗
+                {t("quest.needs.link")}
               </a>
             </div>
           )}
@@ -242,14 +245,14 @@ export default function QuestDetail({ params }: { params: Promise<{ id: string }
             {step === "verifying" && <Spinner />}
             {step === "claiming" && <Spinner />}
             {step === "verifying"
-              ? "Verifying onchain…"
+              ? t("quest.cta.verifying")
               : step === "claiming"
-                ? "Claiming reward…"
+                ? t("quest.cta.claiming")
                 : step === "needsAction"
-                  ? "I did it — check again"
+                  ? t("quest.cta.checkAgain")
                   : isDaily
-                    ? "Open my box"
-                    : "I did it — claim"}
+                    ? t("quest.cta.openBox")
+                    : t("quest.cta.claim")}
           </button>
         </>
       )}
@@ -262,11 +265,13 @@ function SuccessView({
   revealed,
   amountNum,
   questTitle,
+  t,
 }: {
   isDaily: boolean;
   revealed: boolean;
   amountNum: number;
   questTitle: string;
+  t: (key: keyof Dict, vars?: Record<string, string | number>) => string;
 }) {
   const decimals = amountNum < 1 ? 4 : 2;
   return (
@@ -278,14 +283,14 @@ function SuccessView({
           <div className={styles.boxBurst} />
         </div>
       )}
-      <div className={styles.successLabel}>{isDaily ? "Box opened!" : "Reward claimed!"}</div>
+      <div className={styles.successLabel}>{isDaily ? t("quest.success.boxOpened") : t("quest.success.claimed")}</div>
       <div className={`${styles.successAmount} mono`}>
         +<CountUp value={amountNum} decimals={decimals} />
         <span className={styles.successUnit}>cUSD</span>
       </div>
-      <p className={styles.successSub}>{questTitle} — sent to your wallet.</p>
+      <p className={styles.successSub}>{t("quest.success.sub", { title: questTitle })}</p>
       <Link href="/" className={styles.successCta}>
-        Find more quests
+        {t("quest.success.cta")}
       </Link>
     </div>
   );
@@ -302,13 +307,14 @@ function BackBar({
   hasProvider: boolean;
   onConnect: () => void;
 }) {
+  const t = useT();
   return (
     <div className={styles.backBar}>
-      <Link href="/" className={styles.back} aria-label="Back to quests">
+      <Link href="/" className={styles.back} aria-label={t("common.back")}>
         <svg viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden>
           <path d="M14.5 5.5 8 12l6.5 6.5" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
-        Back
+        {t("common.back")}
       </Link>
       <WalletChip address={address} connecting={connecting} hasProvider={hasProvider} onConnect={onConnect} />
     </div>
