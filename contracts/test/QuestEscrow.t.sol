@@ -39,4 +39,41 @@ contract QuestEscrowTest is Test {
         assertEq(maxR, 5e18);
         assertEq(left, 10);
     }
+
+    // --- EIP-712 helper -----------------------------------------------------
+
+    function _sign(uint256 id, address wallet, uint256 amount, uint256 deadline) internal view returns (bytes memory) {
+        bytes32 domain = esc.domainSeparator();
+        bytes32 structHash = keccak256(
+            abi.encode(
+                keccak256("Claim(uint256 questId,address wallet,uint256 amount,uint256 deadline)"),
+                id,
+                wallet,
+                amount,
+                deadline
+            )
+        );
+        bytes32 digest = keccak256(abi.encodePacked("\x19\x01", domain, structHash));
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(SIGNER_PK, digest);
+        return abi.encodePacked(r, s, v);
+    }
+
+    // --- Task 3: claim one-shot ---------------------------------------------
+
+    function test_claim_oneShot_paysOnce() public {
+        vm.prank(sponsor);
+        uint256 id = esc.createQuest(
+            target, address(cusd), 2e18, 2e18, 3, QuestEscrow.Kind.OneShot, uint64(block.timestamp + 1 days)
+        );
+        uint256 dl = block.timestamp + 1 hours;
+        bytes memory sig = _sign(id, user, 2e18, dl);
+        vm.prank(user);
+        esc.claim(id, 2e18, dl, sig);
+        assertEq(cusd.balanceOf(user), 2e18);
+        // second claim by same user reverts
+        bytes memory sig2 = _sign(id, user, 2e18, dl);
+        vm.prank(user);
+        vm.expectRevert(bytes("already claimed"));
+        esc.claim(id, 2e18, dl, sig2);
+    }
 }
