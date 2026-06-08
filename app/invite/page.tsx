@@ -253,7 +253,7 @@ export default function Invite() {
           <button
             className={styles.connectBtn}
             onClick={() => void connect()}
-            disabled={!hasProvider || connecting}
+            disabled={connecting}
           >
             {connecting ? t("wallet.connecting") : t("wallet.connectFull")}
           </button>
