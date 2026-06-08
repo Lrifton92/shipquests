@@ -15,8 +15,9 @@ type Props = {
   onConnect: () => void;
 };
 
-export function WalletChip({ address, connecting, onConnect }: Props) {
+export function WalletChip({ address, connecting, hasProvider, onConnect }: Props) {
   const t = useT();
+  const [helpOpen, setHelpOpen] = useState(false);
 
   if (address) {
     return (
@@ -28,17 +29,24 @@ export function WalletChip({ address, connecting, onConnect }: Props) {
   }
 
   // Disconnected: always offer the connect action. The click re-checks the
-  // provider, so it works even when none was detected at mount.
+  // provider, so it works even when none was detected at mount. When no wallet
+  // is injected (typical in a plain mobile browser), the click would otherwise do
+  // nothing visible — so we surface the "how to connect" guidance immediately.
+  const onConnectClick = () => {
+    onConnect();
+    if (!hasProvider) setHelpOpen(true);
+  };
+
   return (
     <span className={styles.group}>
       <button
         className={`${styles.chip} ${styles.action}`}
-        onClick={onConnect}
+        onClick={onConnectClick}
         disabled={connecting}
       >
         {connecting ? t("wallet.connecting") : t("wallet.connectFull")}
       </button>
-      <HelpPopover label={t("wallet.help.trigger")}>
+      <HelpPopover label={t("wallet.help.trigger")} open={helpOpen} setOpen={setHelpOpen}>
         <p className={styles.helpTitle}>{t("wallet.help.title")}</p>
         <p className={styles.helpBody}>{t("wallet.help.mobile")}</p>
         <p className={styles.helpBody}>{t("wallet.help.desktop")}</p>
@@ -48,8 +56,19 @@ export function WalletChip({ address, connecting, onConnect }: Props) {
 }
 
 // Tiny dependency-free popover: opens on click, closes on outside click or Esc.
-function HelpPopover({ label, children }: { label: string; children: ReactNode }) {
-  const [open, setOpen] = useState(false);
+// Open state is controlled by the parent so the Connect button can surface it
+// when no wallet provider is present.
+function HelpPopover({
+  label,
+  open,
+  setOpen,
+  children,
+}: {
+  label: string;
+  open: boolean;
+  setOpen: (v: boolean) => void;
+  children: ReactNode;
+}) {
   const wrapRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
@@ -66,14 +85,14 @@ function HelpPopover({ label, children }: { label: string; children: ReactNode }
       document.removeEventListener("mousedown", onDown);
       document.removeEventListener("keydown", onKey);
     };
-  }, [open]);
+  }, [open, setOpen]);
 
   return (
     <span className={styles.help} ref={wrapRef}>
       <button
         type="button"
         className={styles.helpTrigger}
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => setOpen(!open)}
         aria-expanded={open}
         aria-label={label}
         title={label}
