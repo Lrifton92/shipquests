@@ -64,7 +64,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ questId: s
     // accrue the sponsor's referral share. Both no-op without a sponsor / KV;
     // neither blocks the signature.
     await markRefereeActive(wallet);
-    await accrueEarning(wallet, amount);
+    await accrueEarning(wallet, questId, amount);
   }
 
   const deadline = BigInt(Math.floor(Date.now() / 1000) + 3600);

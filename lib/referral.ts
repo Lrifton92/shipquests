@@ -76,6 +76,7 @@ const sponsorKey = (referee: string) => `ref:sponsor:${norm(referee)}`;
 const activeKey = (sponsor: string) => `ref:active:${norm(sponsor)}`;
 const earnedKey = (sponsor: string) => `ref:earned:${norm(sponsor)}`;
 const paidKey = (sponsor: string) => `ref:paid:${norm(sponsor)}`;
+const accruedKey = (referee: string) => `ref:accrued:${norm(referee)}`;
 const codeKey = (code: string) => `ref:code:${code.toUpperCase()}`;
 const codeOfKey = (wallet: string) => `ref:codeof:${norm(wallet)}`;
 
@@ -179,8 +180,21 @@ export async function countActive(sponsor: string): Promise<number> {
  * completes a REAL quest, with the reward amount signed for them. Adds the FULL
  * reward (in micro) to the sponsor's earned tally; the pct% is applied at read
  * time in owedWei(). No-op if the referee has no sponsor / KV absent / errors.
+ *
+ * DEDUP (important): accrues AT MOST ONCE per (referee, questId). The attest
+ * endpoint signs every time it's called for an already-completed quest, so
+ * without this a referee could re-hit attest to inflate their sponsor's earnings
+ * with no new real reward. SADD returns the number of newly-added members (1 =
+ * first time → accrue; 0 = already counted → skip).
+ * NOTE: this assumes one reward per (referee, quest), which holds for all current
+ * OneShot quests. A future DAILY *real* quest (repeatable rewards) would need
+ * per-claim accrual instead — revisit accrueEarning then.
  */
-export async function accrueEarning(referee: string, amountWei: bigint): Promise<void> {
+export async function accrueEarning(
+  referee: string,
+  questId: string | number | bigint,
+  amountWei: bigint,
+): Promise<void> {
   const c = kv();
   if (!c) return;
   try {
@@ -188,6 +202,8 @@ export async function accrueEarning(referee: string, amountWei: bigint): Promise
     if (!sponsor) return;
     const micro = weiToMicro(amountWei);
     if (micro <= 0) return;
+    const added = await c.sadd(accruedKey(referee), String(questId));
+    if (!added) return; // already accrued for this quest — ignore repeat attests
     await c.incrby(earnedKey(sponsor), micro);
   } catch {
     /* no-op */
