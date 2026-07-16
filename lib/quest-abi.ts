@@ -10,12 +10,60 @@ export const CELO_CHAIN_ID = 42220 as const;
 /**
  * Deployed escrow on Celo mainnet (2026-06-07, signer 0xd9FD90…643Caa).
  * Public address, not a secret. Env override kept for staging/other deploys.
+ * NOTE: the v1.1 surface (events + `streak` getter) only exists on the v1.1
+ * deploy — point NEXT_PUBLIC_QUEST_ESCROW_ADDRESS at it once deployed.
  */
 export const QUEST_ESCROW_ADDRESS = (process.env.NEXT_PUBLIC_QUEST_ESCROW_ADDRESS ??
   "0x2f575fb83A3c71f7E5C482b19a3C33F8146b491f") as `0x${string}`;
 
 export const QUEST_ESCROW_ABI = [
   { inputs: [{ internalType: "address", name: "_signer", type: "address" }], stateMutability: "nonpayable", type: "constructor" },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, internalType: "uint256", name: "id", type: "uint256" },
+      { indexed: true, internalType: "address", name: "sponsor", type: "address" },
+      { indexed: false, internalType: "address", name: "token", type: "address" },
+      { indexed: false, internalType: "uint256", name: "minReward", type: "uint256" },
+      { indexed: false, internalType: "uint256", name: "maxReward", type: "uint256" },
+      { indexed: false, internalType: "uint256", name: "maxCompletions", type: "uint256" },
+      { indexed: false, internalType: "uint8", name: "kind", type: "uint8" },
+      { indexed: false, internalType: "uint64", name: "deadline", type: "uint64" },
+    ],
+    name: "QuestCreated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, internalType: "uint256", name: "questId", type: "uint256" },
+      { indexed: true, internalType: "address", name: "wallet", type: "address" },
+      { indexed: false, internalType: "uint256", name: "amount", type: "uint256" },
+      { indexed: false, internalType: "uint256", name: "streak", type: "uint256" },
+    ],
+    name: "RewardClaimed",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, internalType: "uint256", name: "questId", type: "uint256" },
+      { indexed: true, internalType: "address", name: "sponsor", type: "address" },
+      { indexed: false, internalType: "uint256", name: "remainder", type: "uint256" },
+    ],
+    name: "UnclaimedWithdrawn",
+    type: "event",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "", type: "uint256" },
+      { internalType: "address", name: "", type: "address" },
+    ],
+    name: "streak",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
   {
     inputs: [
       { internalType: "uint256", name: "questId", type: "uint256" },
