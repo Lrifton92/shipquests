@@ -8,13 +8,13 @@ import { celo } from "viem/chains";
 export const CELO_CHAIN_ID = 42220 as const;
 
 /**
- * Deployed escrow on Celo mainnet (2026-06-07, signer 0xd9FD90…643Caa).
- * Public address, not a secret. Env override kept for staging/other deploys.
- * NOTE: the v1.1 surface (events + `streak` getter) only exists on the v1.1
- * deploy — point NEXT_PUBLIC_QUEST_ESCROW_ADDRESS at it once deployed.
+ * Deployed escrow on Celo mainnet — v1.1 (2026-07-17, events + streak,
+ * signer 0xd9FD90…643Caa). Public address, not a secret. Env override kept
+ * for staging/other deploys. v1 (2026-06-07) stays live for its historical
+ * quests: 0x2f575fb83A3c71f7E5C482b19a3C33F8146b491f.
  */
 export const QUEST_ESCROW_ADDRESS = (process.env.NEXT_PUBLIC_QUEST_ESCROW_ADDRESS ??
-  "0x2f575fb83A3c71f7E5C482b19a3C33F8146b491f") as `0x${string}`;
+  "0x5fe1c9c7fd942245f0145204f6285310a466d6bf") as `0x${string}`;
 
 export const QUEST_ESCROW_ABI = [
   { inputs: [{ internalType: "address", name: "_signer", type: "address" }], stateMutability: "nonpayable", type: "constructor" },
