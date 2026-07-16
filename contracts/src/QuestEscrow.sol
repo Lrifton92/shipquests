@@ -37,6 +37,23 @@ contract QuestEscrow {
     mapping(uint256 => Quest) public quests;
     /// @notice questId => wallet => last claim timestamp (0 = never claimed).
     mapping(uint256 => mapping(address => uint256)) public lastClaim;
+    /// @notice questId => wallet => consecutive-day claim streak (Daily quests).
+    ///         Incremented when a claim lands within 48h of the previous one,
+    ///         reset to 1 otherwise. OneShot quests never store a streak.
+    mapping(uint256 => mapping(address => uint256)) public streak;
+
+    event QuestCreated(
+        uint256 indexed id,
+        address indexed sponsor,
+        address token,
+        uint256 minReward,
+        uint256 maxReward,
+        uint256 maxCompletions,
+        Kind kind,
+        uint64 deadline
+    );
+    event RewardClaimed(uint256 indexed questId, address indexed wallet, uint256 amount, uint256 streak);
+    event UnclaimedWithdrawn(uint256 indexed questId, address indexed sponsor, uint256 remainder);
 
     /// @dev keccak256("Claim(uint256 questId,address wallet,uint256 amount,uint256 deadline)")
     bytes32 private constant CLAIM_TYPEHASH =
@@ -83,6 +100,7 @@ contract QuestEscrow {
         require(deadline > block.timestamp, "bad deadline");
         id = nextId++;
         quests[id] = Quest(msg.sender, target, token, minReward, maxReward, maxCompletions, deadline, kind);
+        emit QuestCreated(id, msg.sender, token, minReward, maxReward, maxCompletions, kind, deadline);
         require(IERC20(token).transferFrom(msg.sender, address(this), maxReward * maxCompletions), "fund fail");
     }
 
@@ -95,18 +113,26 @@ contract QuestEscrow {
         require(block.timestamp <= deadline, "expired");
         require(block.timestamp <= q.deadline, "quest over");
         require(amount >= q.minReward && amount <= q.maxReward, "amount oob");
+        uint256 s = 1;
         if (q.kind == Kind.OneShot) {
             require(lastClaim[questId][msg.sender] == 0, "already claimed");
         } else {
             uint256 last = lastClaim[questId][msg.sender];
             // last == 0 means never claimed: first daily claim is always allowed.
             require(last == 0 || block.timestamp >= last + 24 hours, "cooldown");
+            // Consecutive day (claim within 48h of the previous one) extends the
+            // streak; a longer gap resets it to 1.
+            if (last != 0 && block.timestamp <= last + 48 hours) {
+                s = streak[questId][msg.sender] + 1;
+            }
+            streak[questId][msg.sender] = s;
         }
         bytes32 structHash = keccak256(abi.encode(CLAIM_TYPEHASH, questId, msg.sender, amount, deadline));
         bytes32 digest = keccak256(abi.encodePacked("\x19\x01", domainSeparator, structHash));
         require(_recover(digest, sig) == signer, "bad sig");
         lastClaim[questId][msg.sender] = block.timestamp;
         q.left -= 1;
+        emit RewardClaimed(questId, msg.sender, amount, s);
         require(IERC20(q.token).transfer(msg.sender, amount), "pay fail");
     }
 
@@ -120,6 +146,7 @@ contract QuestEscrow {
         withdrawn[questId] = true;
         uint256 remainder = q.maxReward * q.left;
         q.left = 0;
+        emit UnclaimedWithdrawn(questId, q.sponsor, remainder);
         require(IERC20(q.token).transfer(q.sponsor, remainder), "wd fail");
     }
 

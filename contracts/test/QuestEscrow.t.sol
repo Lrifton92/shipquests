@@ -138,6 +138,95 @@ contract QuestEscrowTest is Test {
         esc.claim(id, 2e18, dl, abi.encodePacked(r, s, v));
     }
 
+    // --- v1.1: events -------------------------------------------------------
+
+    event QuestCreated(
+        uint256 indexed id,
+        address indexed sponsor,
+        address token,
+        uint256 minReward,
+        uint256 maxReward,
+        uint256 maxCompletions,
+        QuestEscrow.Kind kind,
+        uint64 deadline
+    );
+    event RewardClaimed(uint256 indexed questId, address indexed wallet, uint256 amount, uint256 streak);
+    event UnclaimedWithdrawn(uint256 indexed questId, address indexed sponsor, uint256 remainder);
+
+    function test_events_questCreated() public {
+        uint64 dl = uint64(block.timestamp + 30 days);
+        vm.expectEmit(true, true, false, true);
+        emit QuestCreated(1, sponsor, address(cusd), 1e18, 5e18, 10, QuestEscrow.Kind.Daily, dl);
+        vm.prank(sponsor);
+        esc.createQuest(target, address(cusd), 1e18, 5e18, 10, QuestEscrow.Kind.Daily, dl);
+    }
+
+    function test_events_rewardClaimed_and_unclaimedWithdrawn() public {
+        vm.prank(sponsor);
+        uint256 id = esc.createQuest(
+            target, address(cusd), 2e18, 2e18, 5, QuestEscrow.Kind.OneShot, uint64(block.timestamp + 1 days)
+        );
+        uint256 dl = block.timestamp + 1 hours;
+        bytes memory sig = _sign(id, user, 2e18, dl);
+        vm.expectEmit(true, true, false, true);
+        emit RewardClaimed(id, user, 2e18, 1); // OneShot: streak is always 1
+        vm.prank(user);
+        esc.claim(id, 2e18, dl, sig);
+
+        vm.warp(block.timestamp + 2 days);
+        vm.expectEmit(true, true, false, true);
+        emit UnclaimedWithdrawn(id, sponsor, 8e18); // 2e18 * 4 remaining
+        vm.prank(sponsor);
+        esc.withdrawUnclaimed(id);
+    }
+
+    // --- v1.1: daily streak ---------------------------------------------------
+
+    function test_streak_incrementsWithin48hAndResetsAfter() public {
+        vm.prank(sponsor);
+        uint256 id = esc.createQuest(
+            target, address(cusd), 1e18, 5e18, 10, QuestEscrow.Kind.Daily, uint64(block.timestamp + 60 days)
+        );
+        // day 1 -> streak 1
+        uint256 dl = block.timestamp + 1 hours;
+        bytes memory sig = _sign(id, user, 1e18, dl);
+        vm.prank(user);
+        esc.claim(id, 1e18, dl, sig);
+        assertEq(esc.streak(id, user), 1);
+        // +24h (within 48h of last claim) -> streak 2
+        vm.warp(block.timestamp + 24 hours);
+        dl = block.timestamp + 1 hours;
+        sig = _sign(id, user, 1e18, dl);
+        vm.prank(user);
+        esc.claim(id, 1e18, dl, sig);
+        assertEq(esc.streak(id, user), 2);
+        // +72h (missed a day, gap > 48h) -> streak resets to 1
+        vm.warp(block.timestamp + 72 hours);
+        dl = block.timestamp + 1 hours;
+        sig = _sign(id, user, 1e18, dl);
+        vm.prank(user);
+        esc.claim(id, 1e18, dl, sig);
+        assertEq(esc.streak(id, user), 1);
+    }
+
+    function test_streak_emittedInRewardClaimed() public {
+        vm.prank(sponsor);
+        uint256 id = esc.createQuest(
+            target, address(cusd), 1e18, 5e18, 10, QuestEscrow.Kind.Daily, uint64(block.timestamp + 60 days)
+        );
+        uint256 dl = block.timestamp + 1 hours;
+        bytes memory sig = _sign(id, user, 1e18, dl);
+        vm.prank(user);
+        esc.claim(id, 1e18, dl, sig);
+        vm.warp(block.timestamp + 24 hours);
+        dl = block.timestamp + 1 hours;
+        sig = _sign(id, user, 2e18, dl);
+        vm.expectEmit(true, true, false, true);
+        emit RewardClaimed(id, user, 2e18, 2); // second consecutive day
+        vm.prank(user);
+        esc.claim(id, 2e18, dl, sig);
+    }
+
     // --- Task 5: withdrawUnclaimed + reentrancy -----------------------------
 
     function test_withdrawUnclaimed_afterDeadlineOnly() public {
