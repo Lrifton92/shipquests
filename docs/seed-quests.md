@@ -4,6 +4,21 @@ These are the 5 starter quests. Create each one in the **Create** tab (`/sponsor
 with the values below. The escrow locks `Max reward × Max completions` per quest,
 so the **worst-case total you fund is ~1.69 cUSD** (+ a little CELO for gas).
 
+> **Scripted seeding (one quest, keystore-signed).** Instead of the UI you can run
+> `contracts/script/seed-quest.ts` — it does `approve` + `createQuest` in one signed
+> run on the v1.1 escrow (`0x5fe1c9c7fd942245f0145204f6285310a466d6bf`). It refuses
+> to run unless the sponsor (`DEPLOYER_PRIVATE_KEY`, i.e. `0x1dee…`) holds enough cUSD.
+> Defaults reproduce the daily G$ box (0.02–0.15 × 4 = 0.60 cUSD). Override with env:
+> `TARGET, MIN_REWARD, MAX_REWARD, COMPLETIONS, KIND, DEADLINE_DAYS`.
+>
+> ```
+> cd contracts
+> CELO_RPC_URL=https://forno.celo.org npx hardhat run script/seed-quest.ts --network celo
+> ```
+>
+> ⚠️ As of 2026-07-17 both `0x1dee` and the old sponsor `0x6B8F…182769` hold **0 cUSD**,
+> so 0x1dee must be topped up first (MiniPay → send cUSD to `0x1dee…`, or bridge).
+
 The app shows real titles/descriptions for these targets automatically (mapping
 in `lib/quest-meta.ts`, keyed by the **target address**). Any other target falls
 back to the generic "Quest #N" copy.
