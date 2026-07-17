@@ -73,6 +73,8 @@ const pt: Dict = {
   "quest.notFound.back": "Voltar às missões",
   "quest.badge.daily": "CAIXA DIÁRIA",
   "quest.badge.oneshot": "ÚNICA",
+  "quest.streak.badge": "SÉRIE DIA {n} 🔥",
+  "quest.streak.title": "Sua sequência de dias seguidos nesta missão diária",
   "quest.reward.mystery": "Recompensa misteriosa",
   "quest.reward.label": "Recompensa",
   "quest.reward.hint": "O valor exato é revelado quando você abre a caixa.",

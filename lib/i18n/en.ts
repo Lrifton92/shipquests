@@ -74,6 +74,8 @@ const en = {
   "quest.notFound.back": "Back to quests",
   "quest.badge.daily": "DAILY BOX",
   "quest.badge.oneshot": "ONE-SHOT",
+  "quest.streak.badge": "DAY {n} STREAK 🔥",
+  "quest.streak.title": "Your consecutive-day streak on this daily quest",
   "quest.reward.mystery": "Mystery reward",
   "quest.reward.label": "Reward",
   "quest.reward.hint": "The exact amount is revealed when you open the box.",

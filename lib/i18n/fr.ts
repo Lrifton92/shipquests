@@ -72,6 +72,8 @@ const fr: Dict = {
   "quest.notFound.back": "Retour aux quêtes",
   "quest.badge.daily": "BOÎTE QUOTIDIENNE",
   "quest.badge.oneshot": "UNIQUE",
+  "quest.streak.badge": "SÉRIE JOUR {n} 🔥",
+  "quest.streak.title": "Ta série de jours consécutifs sur cette quête quotidienne",
   "quest.reward.mystery": "Récompense mystère",
   "quest.reward.label": "Récompense",
   "quest.reward.hint": "Le montant exact se révèle quand tu ouvres la boîte.",

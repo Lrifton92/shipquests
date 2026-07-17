@@ -19,6 +19,7 @@ import {
   type QuestCard,
 } from "@/lib/quest-list";
 import { QUEST_ESCROW_ABI, QUEST_ESCROW_ADDRESS } from "@/lib/quest-abi";
+import { fetchStreak } from "@/lib/claims";
 
 type Step =
   | "loading"
@@ -62,6 +63,20 @@ export default function QuestDetail({ params }: { params: Promise<{ id: string }
   const [claim, setClaim] = useState<ClaimData | null>(null);
   const [errorText, setErrorText] = useState("");
   const [revealed, setRevealed] = useState(false);
+  const [streak, setStreak] = useState(0);
+
+  // v1.1: show the wallet's consecutive-day streak on daily quests (read-only,
+  // never-fail — fetchStreak returns 0 on any error and the chip just hides).
+  useEffect(() => {
+    if (!address || !quest || quest.kind !== "DAILY" || isMock || !/^\d+$/.test(quest.id)) return;
+    let alive = true;
+    void fetchStreak(BigInt(quest.id), address).then((s) => {
+      if (alive) setStreak(s);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [address, quest, isMock, step]);
 
   useEffect(() => {
     let alive = true;
@@ -196,8 +211,15 @@ export default function QuestDetail({ params }: { params: Promise<{ id: string }
       ) : (
         <>
           <header className={styles.questHead}>
-            <span className={`${styles.badge} ${isDaily ? styles.daily : styles.oneshot}`}>
-              {isDaily ? t("quest.badge.daily") : t("quest.badge.oneshot")}
+            <span className={styles.badgeRow}>
+              <span className={`${styles.badge} ${isDaily ? styles.daily : styles.oneshot}`}>
+                {isDaily ? t("quest.badge.daily") : t("quest.badge.oneshot")}
+              </span>
+              {isDaily && streak > 0 && (
+                <span className={styles.streak} title={t("quest.streak.title")}>
+                  {t("quest.streak.badge", { n: String(streak) })}
+                </span>
+              )}
             </span>
             <h1 className={styles.title}>
               {quest.icon && <span aria-hidden>{quest.icon} </span>}

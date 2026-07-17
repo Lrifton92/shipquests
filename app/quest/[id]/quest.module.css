@@ -69,6 +69,24 @@
   border: 1px solid var(--border);
 }
 
+.badgeRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.streak {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  padding: 5px 9px;
+  border-radius: var(--r-sm);
+  text-transform: uppercase;
+  color: var(--gold);
+  border: 1px solid var(--gold-line);
+  background: color-mix(in srgb, var(--gold) 8%, transparent);
+}
+
 .title {
   font-size: 26px;
   font-weight: 800;
