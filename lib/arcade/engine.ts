@@ -219,8 +219,9 @@ export function step(g: Game, dt: number, rng: () => number = Math.random) {
     return;
   }
 
-  g.modeT += dt;
+  // classic rule: the scatter/chase clock pauses while ghosts are frightened
   if (g.frightenedT > 0) g.frightenedT = Math.max(0, g.frightenedT - dt);
+  else g.modeT += dt;
   const sp = speeds(g);
 
   movePac(g, dt, sp.pac);
@@ -337,14 +338,28 @@ function moveGhost(
   }
 }
 
-function samePos(a: { tile: Tile; progress: number }, b: { tile: Tile; progress: number }) {
-  return a.tile.c === b.tile.c && a.tile.r === b.tile.r;
+/** Interpolated position in tile units — matches what the renderer draws. */
+function fpos(e: { tile: Tile; dir: Dir | null; progress: number }): { x: number; y: number } {
+  const dc = e.dir?.dc ?? 0;
+  const dr = e.dir?.dr ?? 0;
+  return { x: e.tile.c + dc * e.progress, y: e.tile.r + dr * e.progress };
+}
+
+/** Distance-based collision: also catches the tile-swap pass-through case,
+ *  where pac and a ghost cross each other within a single tick and never
+ *  share a tile index. Threshold ≈ half a tile, like the arcade hitbox. */
+function touching(g: Game, gh: Ghost): boolean {
+  const a = fpos(g.pac);
+  const b = fpos(gh);
+  const dx = a.x - b.x;
+  const dy = a.y - b.y;
+  return dx * dx + dy * dy < 0.55 * 0.55;
 }
 
 function handleCollisions(g: Game) {
   for (const gh of g.ghosts) {
     if (gh.mode === "eaten" || gh.mode === "housed") continue;
-    if (!samePos(g.pac, gh)) continue;
+    if (!touching(g, gh)) continue;
     if (gh.mode === "frightened") {
       g.score += g.chain;
       g.events.push(`ghost:${g.chain}`);

@@ -160,6 +160,48 @@ describe("ghosts & collisions", () => {
     expect(g.score - s).toBe(400);
   });
 
+  it("pass-through counts: crossing a frightened ghost between tiles eats it", () => {
+    const g = playing();
+    g.frightenedT = 5;
+    const gh = g.ghosts[0];
+    // pac and ghost face each other on adjacent tiles of the home row
+    const { c, r } = g.pac.tile;
+    g.pac.dir = DIRS.left;
+    g.pac.pending = DIRS.left;
+    gh.mode = "frightened";
+    gh.tile = { c: c - 1, r };
+    gh.dir = DIRS.right;
+    gh.progress = 0;
+    // small steps so they swap tiles between arrivals instead of landing together
+    for (let i = 0; i < 30 && gh.mode === "frightened"; i++) step(g, 0.02, rng0);
+    expect(gh.mode).toBe("eaten");
+  });
+
+  it("pass-through counts: crossing a normal ghost kills pac", () => {
+    const g = playing();
+    const gh = g.ghosts[0];
+    const { c, r } = g.pac.tile;
+    g.pac.dir = DIRS.left;
+    g.pac.pending = DIRS.left;
+    gh.mode = "chase";
+    gh.tile = { c: c - 1, r };
+    gh.dir = DIRS.right;
+    gh.progress = 0;
+    for (let i = 0; i < 30 && g.phase === "playing"; i++) step(g, 0.02, rng0);
+    expect(g.phase).toBe("dying");
+  });
+
+  it("scatter/chase clock pauses while frightened", () => {
+    const g = playing();
+    const before = g.modeT;
+    g.frightenedT = 3;
+    step(g, 1, rng0);
+    expect(g.modeT).toBe(before);
+    g.frightenedT = 0;
+    step(g, 1, rng0);
+    expect(g.modeT).toBeGreaterThan(before);
+  });
+
   it("game over at 0 lives", () => {
     const g = playing();
     g.lives = 1;

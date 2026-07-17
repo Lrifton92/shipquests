@@ -339,12 +339,11 @@ function drawGhost(
   }
   const R = T / 2 - 1.5;
   const eyesOnly = mode === "eaten";
+  const frightened = mode === "frightened";
+  const flashing = frightened && frightenedT < 2 && Math.floor(now / 160) % 2 === 0;
   if (!eyesOnly) {
     let body = GHOST_COLORS[name] ?? "#fff";
-    if (mode === "frightened") {
-      const flashing = frightenedT < 2 && Math.floor(now / 160) % 2 === 0;
-      body = flashing ? "#f7f7ff" : "#2b3bd6";
-    }
+    if (frightened) body = flashing ? "#f7f7ff" : "#6d5cff"; // vivid indigo, pops on the navy maze
     ctx.fillStyle = body;
     ctx.beginPath();
     ctx.arc(x, y - 1, R, Math.PI, 0);
@@ -360,8 +359,22 @@ function drawGhost(
     ctx.closePath();
     ctx.fill();
   }
-  // eyes
   const ex = 3;
+  if (frightened && !eyesOnly) {
+    // classic frightened face: square eyes + wavy mouth, no pupils
+    const face = flashing ? "#d23c3c" : "#f7f7ff";
+    ctx.fillStyle = face;
+    ctx.fillRect(x - ex - 1, y - 4, 2.6, 2.6);
+    ctx.fillRect(x + ex - 1.6, y - 4, 2.6, 2.6);
+    ctx.strokeStyle = face;
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(x - 5, y + 3);
+    for (let i = 0; i < 5; i++) ctx.lineTo(x - 5 + (i + 1) * 2, y + (i % 2 === 0 ? 1.4 : 3));
+    ctx.stroke();
+    return;
+  }
+  // normal / eaten: round white eyes with pupils
   ctx.fillStyle = "#fff";
   ctx.beginPath();
   ctx.arc(x - ex, y - 2, 2.4, 0, Math.PI * 2);
