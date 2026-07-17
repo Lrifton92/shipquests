@@ -1,5 +1,6 @@
 "use client";
 import { useCallback, useEffect, useState, type CSSProperties } from "react";
+import Link from "next/link";
 import styles from "./page.module.css";
 import { useMiniPay } from "./_components/useMiniPay";
 import { WalletChip } from "./_components/WalletChip";
@@ -109,6 +110,26 @@ export default function Home() {
           ))}
         </div>
       )}
+
+      <Link href="/arcade" className={`${styles.arcadeCard} reveal`}>
+        <span className={styles.arcadeGhost} aria-hidden>
+          <svg viewBox="0 0 16 16" width="26" height="26">
+            <path
+              d="M2 15V8a6 6 0 0 1 12 0v7l-2-1.6L10 15l-2-1.6L6 15l-2-1.6L2 15Z"
+              fill="#41e8e0"
+            />
+            <circle cx="6" cy="7.5" r="1.7" fill="#fff" />
+            <circle cx="10.5" cy="7.5" r="1.7" fill="#fff" />
+            <circle cx="6.4" cy="7.9" r="0.8" fill="#2b3bd6" />
+            <circle cx="10.9" cy="7.9" r="0.8" fill="#2b3bd6" />
+          </svg>
+        </span>
+        <span className={styles.arcadeText}>
+          <span className={styles.arcadeTitle}>{t("arcade.teaser.title")}</span>
+          <span className={styles.arcadeSub}>{t("arcade.teaser.sub")}</span>
+        </span>
+        <span className={styles.arcadeCta}>{t("arcade.teaser.cta")} ▸</span>
+      </Link>
     </main>
   );
 }

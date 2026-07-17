@@ -23,6 +23,17 @@ const en = {
   "nav.create": "Create",
   "nav.settings": "Settings",
 
+  // Arcade ---------------------------------------------------------------
+  "arcade.score": "Score",
+  "arcade.hiscore": "Hi-score",
+  "arcade.level": "Level",
+  "arcade.soundOn": "Sound: off",
+  "arcade.soundOff": "Sound: on",
+  "arcade.hint": "Swipe or arrows to move — collect cUSD, dodge the gas spikes",
+  "arcade.teaser.title": "Gas Chase",
+  "arcade.teaser.sub": "Take a break — dodge the gas spikes, grab the cUSD.",
+  "arcade.teaser.cta": "Insert coin",
+
   // Home -----------------------------------------------------------------
   "home.hero.label": "Earn rewards",
   "home.hero.unit": "on Celo",

@@ -205,3 +205,80 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+
+/* Arcade teaser — old school invite at the bottom of the quest list. */
+.arcadeCard {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  margin-top: var(--s-4);
+  padding: var(--s-4) var(--s-5);
+  border-radius: 16px;
+  border: 1px solid var(--gold-line);
+  background:
+    linear-gradient(180deg, rgba(59, 108, 255, 0.10), rgba(5, 6, 15, 0.6)),
+    repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 0 1px, transparent 1px 3px);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.arcadeCard:hover {
+  border-color: var(--gold);
+}
+
+.arcadeCard:active {
+  transform: scale(0.985);
+}
+
+.arcadeGhost {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: rgba(65, 232, 224, 0.08);
+  animation: arcadeBob 1.6s ease-in-out infinite;
+}
+
+@keyframes arcadeBob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.arcadeText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.arcadeTitle {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.arcadeSub {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.arcadeCta {
+  margin-left: auto;
+  flex: none;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold);
+  animation: arcadeBlink 1.2s steps(2) infinite;
+}
+
+@keyframes arcadeBlink {
+  0%, 60% { opacity: 1; }
+  61%, 100% { opacity: 0.25; }
+}

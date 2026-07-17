@@ -22,6 +22,17 @@ const fr: Dict = {
   "nav.create": "Créer",
   "nav.settings": "Réglages",
 
+  // Arcade ---------------------------------------------------------------
+  "arcade.score": "Score",
+  "arcade.hiscore": "Record",
+  "arcade.level": "Niveau",
+  "arcade.soundOn": "Son : off",
+  "arcade.soundOff": "Son : on",
+  "arcade.hint": "Swipe ou flèches — ramasse les cUSD, évite les gas spikes",
+  "arcade.teaser.title": "Gas Chase",
+  "arcade.teaser.sub": "Fais une pause — évite les gas spikes, gobe les cUSD.",
+  "arcade.teaser.cta": "Insert coin",
+
   // Accueil --------------------------------------------------------------
   "home.hero.label": "Gagne des récompenses",
   "home.hero.unit": "sur Celo",
