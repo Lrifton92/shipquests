@@ -182,6 +182,7 @@ const en = {
   "history.empty.cta": "Browse quests",
   "history.row.quest": "Quest #{id}",
   "history.row.daily": "DAILY",
+  "history.row.streak": "DAY {n} STREAK",
   "history.row.exactTitle": "Reward claimed",
   "history.row.rangeTitle": "Reward range — daily amounts vary per claim",
 

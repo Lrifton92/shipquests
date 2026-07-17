@@ -178,6 +178,7 @@ const pt: Dict = {
   "history.empty.cta": "Explorar missões",
   "history.row.quest": "Missão #{id}",
   "history.row.daily": "DIÁRIA",
+  "history.row.streak": "SÉRIE DIA {n}",
   "history.row.exactTitle": "Recompensa resgatada",
   "history.row.rangeTitle": "Faixa de recompensa — os valores diários variam por resgate",
 

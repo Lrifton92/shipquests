@@ -177,6 +177,7 @@ const fr: Dict = {
   "history.empty.cta": "Parcourir les quêtes",
   "history.row.quest": "Quête #{id}",
   "history.row.daily": "QUOTIDIENNE",
+  "history.row.streak": "SÉRIE JOUR {n}",
   "history.row.exactTitle": "Récompense réclamée",
   "history.row.rangeTitle": "Fourchette de récompense — les montants quotidiens varient à chaque réclamation",
 

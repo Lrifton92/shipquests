@@ -1,9 +1,8 @@
 "use client";
-// History: quests the connected wallet has completed. The contract emits no
-// events, so we derive history by reading lastClaim(questId, wallet) for each
-// quest 1..nextId-1 — a non-zero value is the unix timestamp of the user's claim.
-// Amount per claim isn't stored onchain (it's set by the off-chain signature), so
-// we show the quest's reward range as a reference, labelled honestly.
+// History: quests the connected wallet has completed. Primary source is the
+// v1.1 RewardClaimed events (exact amount + streak per claim). If the log query
+// fails we fall back to the legacy lastClaim(questId, wallet) brute-scan, which
+// only knows the quest's reward range (shown honestly with a ~ prefix).
 import { useCallback, useEffect, useState, type CSSProperties } from "react";
 import Link from "next/link";
 import { celo } from "viem/chains";
@@ -13,6 +12,7 @@ import { useMiniPay } from "../_components/useMiniPay";
 import { WalletChip } from "../_components/WalletChip";
 import { useT, useLang } from "../_components/i18n";
 import { rewardLabel } from "@/lib/quest-list";
+import { fetchClaims } from "@/lib/claims";
 import { QUEST_ESCROW_ABI, QUEST_ESCROW_ADDRESS } from "@/lib/quest-abi";
 
 const ZERO = "0x0000000000000000000000000000000000000000";
@@ -28,6 +28,8 @@ type Entry = {
   minReward: bigint;
   maxReward: bigint;
   kind: number;
+  /** consecutive-day streak at claim time (v1.1 events only; 0 = one-shot) */
+  streak?: number;
 };
 
 type State = "idle" | "loading" | "ready" | "error";
@@ -100,10 +102,27 @@ export default function History() {
     if (!address || isMock) return;
     setState("loading");
     try {
-      setEntries(await readHistory(address));
+      // v1.1 events: exact amounts + streaks
+      const claims = await fetchClaims(address);
+      setEntries(
+        claims.map((c) => ({
+          id: c.questId,
+          claimedAt: c.claimedAt,
+          minReward: c.amount,
+          maxReward: c.amount,
+          kind: c.streak > 0 ? 1 : 0,
+          streak: c.streak,
+        })),
+      );
       setState("ready");
     } catch {
-      setState("error");
+      // legacy fallback: lastClaim brute-scan (range amounts, no streak)
+      try {
+        setEntries(await readHistory(address));
+        setState("ready");
+      } catch {
+        setState("error");
+      }
     }
   }, [address, isMock]);
 
@@ -208,6 +227,11 @@ export default function History() {
                   <span className={styles.rowTitle}>
                     {t("history.row.quest", { id: e.id })}
                     {e.kind === 1 && <span className={styles.dailyTag}>{t("history.row.daily")}</span>}
+                    {(e.streak ?? 0) > 1 && (
+                      <span className={styles.streakTag}>
+                        {t("history.row.streak", { n: String(e.streak) })}
+                      </span>
+                    )}
                   </span>
                   <span className={styles.rowDate}>{fmtDate(e.claimedAt, lang)}</span>
                 </div>

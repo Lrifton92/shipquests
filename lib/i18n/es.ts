@@ -178,6 +178,7 @@ const es: Dict = {
   "history.empty.cta": "Explorar misiones",
   "history.row.quest": "Misión #{id}",
   "history.row.daily": "DIARIA",
+  "history.row.streak": "RACHA DÍA {n}",
   "history.row.exactTitle": "Recompensa reclamada",
   "history.row.rangeTitle": "Rango de recompensa — los montos diarios varían por reclamación",
 
